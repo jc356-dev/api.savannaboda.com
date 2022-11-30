@@ -1,0 +1,10 @@
+rest_toolkit_commerce.settings:
+  title: Rest Toolkit Commerce Settings
+  parent: system.admin_config_system
+  route_name: rest_toolkit_commerce.settings
+  weight: 10
+entity.rtc_custom_adjustment.overview:
+  title: RTC Custom Adjustments
+  parent: system.admin_structure
+  description: 'List of RTC Custom Adjustments added to Commerce Orders.'
+  route_name: entity.rtc_custom_adjustment.collection

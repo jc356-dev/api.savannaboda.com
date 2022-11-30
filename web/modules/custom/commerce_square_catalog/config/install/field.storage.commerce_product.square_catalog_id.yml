@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - commerce_square_catalog
+id: commerce_product.square_catalog_id
+field_name: square_catalog_id
+entity_type: commerce_product
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: true
+custom_storage: false

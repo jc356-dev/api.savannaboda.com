@@ -1,0 +1,54 @@
+uuid: 393144a9-e7be-4c01-8ed5-0f75b37ea4f1
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.printful
+    - field.field.commerce_product.printful.body
+    - field.field.commerce_product.printful.field_friendly_url
+    - field.field.commerce_product.printful.printful_reference
+  module:
+    - commerce_product
+    - fieldable_path
+    - text
+id: commerce_product.printful.default
+targetEntityType: commerce_product
+bundle: printful
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 11
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_friendly_url:
+    weight: 12
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: fieldable_path_formatter
+    region: content
+  title:
+    label: hidden
+    type: string
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  variations:
+    type: commerce_add_to_cart
+    weight: 10
+    region: content
+    label: above
+    settings:
+      combine: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  printful_reference: true
+  search_api_excerpt: true
+  stores: true
+  uid: true

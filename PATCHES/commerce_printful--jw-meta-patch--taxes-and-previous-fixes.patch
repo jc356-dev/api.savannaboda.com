@@ -1,0 +1,716 @@
+diff --git a/commerce_printful.info.yml b/commerce_printful.info.yml
+index a2d5e0c..48fbca0 100644
+--- a/commerce_printful.info.yml
++++ b/commerce_printful.info.yml
+@@ -10,5 +10,5 @@ dependencies:
+   - commerce:commerce_product
+   - commerce:commerce_order
+   - commerce:commerce_tax
+-  - commerce_currency_resolver:commerce_currency_resolver (>= 8.x-1.53)
++  - commerce_currency_resolver:commerce_currency_resolver
+   - commerce_shipping:commerce_shipping
+diff --git a/commerce_printful.services.yml b/commerce_printful.services.yml
+index 124ef54..6b3cc60 100644
+--- a/commerce_printful.services.yml
++++ b/commerce_printful.services.yml
+@@ -6,7 +6,7 @@ services:
+   # Product integrator service.
+   commerce_printful.product_integrator:
+     class: Drupal\commerce_printful\Service\ProductIntegrator
+-    arguments: ['@commerce_printful.printful', '@entity_type.manager', '@file_system', '@logger.factory', '@entity_field.manager']
++    arguments: ['@commerce_printful.printful', '@entity_type.manager', '@file_system', '@logger.factory']
+ 
+   # Order integrator service.
+   commerce_printful.order_integrator:
+diff --git a/src/EventSubscriber/OrderEventSubscriber.php b/src/EventSubscriber/OrderEventSubscriber.php
+index baab992..406df91 100644
+--- a/src/EventSubscriber/OrderEventSubscriber.php
++++ b/src/EventSubscriber/OrderEventSubscriber.php
+@@ -5,6 +5,7 @@ namespace Drupal\commerce_printful\EventSubscriber;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+ use Drupal\commerce_printful\Service\OrderIntegratorInterface;
+ use Drupal\commerce_order\Event\OrderEvent;
++use Drupal\commerce_shipping\Event\ShippingRatesEvent;
+ 
+ /**
+  * Defines the order event subscriber.
+@@ -34,6 +35,7 @@ class OrderEventSubscriber implements EventSubscriberInterface {
+   public static function getSubscribedEvents() {
+     $events = [
+       'commerce_order.order.paid' => 'sendToPrintful',
++      'commerce_shipping.rates' => 'calculatePrintfulTax'
+     ];
+     return $events;
+   }
+@@ -49,4 +51,10 @@ class OrderEventSubscriber implements EventSubscriberInterface {
+     $this->orderIntegrator->createPrintfulOrder($order);
+   }
+ 
++  public function calculatePrintfulTax(ShippingRatesEvent $event) {
++    $shipment = $event->getShipment();
++    $order = $shipment->getOrder();
++    $this->orderIntegrator->addPrintfulTax($shipment, $order);
++  }
++
+ }
+diff --git a/src/Form/PrintfulStoreForm.php b/src/Form/PrintfulStoreForm.php
+index 87a3a3a..488dd76 100644
+--- a/src/Form/PrintfulStoreForm.php
++++ b/src/Form/PrintfulStoreForm.php
+@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityForm;
+ use Drupal\Core\Entity\EntityFieldManagerInterface;
+ use Drupal\Core\Entity\EntityTypeManagerInterface;
+ use Drupal\commerce_printful\Service\PrintfulInterface;
++use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\DependencyInjection\ContainerInterface;
+ use Drupal\Core\Form\FormStateInterface;
+ 
+@@ -42,6 +43,13 @@ class PrintfulStoreForm extends EntityForm {
+    */
+   protected $productBundles;
+ 
++  /**
++   * The current request.
++   *
++   * @var \Symfony\Component\HttpFoundation\Request
++   */
++  protected $request;
++
+   /**
+    * Creates a new PrintfulStoreForm instance.
+    *
+@@ -51,11 +59,14 @@ class PrintfulStoreForm extends EntityForm {
+    *   The entity type manager.
+    * @param \Drupal\commerce_printful\Service\PrintfulInterface $pf
+    *   The Printful API service.
++   * @param \Symfony\Component\HttpFoundation\Request $request
++   *   The current request.
+    */
+   public function __construct(
+     EntityFieldManagerInterface $entityFieldManager,
+     EntityTypeManagerInterface $entityTypeManager,
+-    PrintfulInterface $pf
++    PrintfulInterface $pf,
++    Request $request
+   ) {
+     // Prepare a list of product bundles.
+     $this->productBundles = $entityTypeManager->getStorage('commerce_product_type')->loadMultiple();
+@@ -68,6 +79,7 @@ class PrintfulStoreForm extends EntityForm {
+     }
+ 
+     $this->pf = $pf;
++    $this->request = $request;
+   }
+ 
+   /**
+@@ -77,7 +89,8 @@ class PrintfulStoreForm extends EntityForm {
+     return new static(
+       $container->get('entity_field.manager'),
+       $container->get('entity_type.manager'),
+-      $container->get('commerce_printful.printful')
++      $container->get('commerce_printful.printful'),
++      $container->get('request_stack')->getCurrentRequest()
+     );
+   }
+ 
+@@ -116,7 +129,7 @@ class PrintfulStoreForm extends EntityForm {
+ 
+     $form['apiKey'] = [
+       '#type' => 'textfield',
+-      '#title' => $this->t('API key'),
++      '#title' => $this->t('API key for this store'),
+       '#default_value' => $this->entity->get('apiKey'),
+       '#required' => TRUE,
+     ];
+@@ -124,21 +137,23 @@ class PrintfulStoreForm extends EntityForm {
+       '#theme' => 'item_list',
+       '#type' => 'ol',
+       '#items' => [
+-        $this->t('Log in to your Printful account in order to access the dashboard'),
+-        $this->t('Go to Settings > Stores'),
+-        $this->t('Select the store you would like to connect by clicking "Edit"'),
+-        $this->t('Click the "Add API Access" button'),
+-        $this->t('Enter your website URL & get your unique API Key to add in the field above'),
++        $this->t('Log in to your Printful account in order to access the dashboard.'),
++        $this->t('Click on your username in the header to access the profile menu.'),
++        $this->t('Click "Stores".'),
++        $this->t('Click "Edit" to the right of the desired store.'),
++        $this->t('Click "API" in the menu on the left.'),
++        $this->t('Click "Enable API Access".'),
++        $this->t('Enter the "API Key" from the Printful dashboard into the field below.'),
++        $this->t('Click "Save configuration".'),
+       ],
+     ];
+ 
+     // Commerce store.
+     $form['commerceStoreId'] = [
+       '#type' => 'select',
+-      '#title' => $this->t('Store'),
++      '#title' => $this->t('Commerce store'),
+       '#options' => $this->stores,
+       '#default_value' => $this->entity->get('commerceStoreId'),
+-      '#required' => TRUE,
+     ];
+ 
+     // Sync product type.
+@@ -149,7 +164,7 @@ class PrintfulStoreForm extends EntityForm {
+     }
+     $form['productBundle'] = [
+       '#type' => 'select',
+-      '#title' => $this->t('Product type'),
++      '#title' => $this->t('Commerce Product type to sync with this store.'),
+       '#required' => TRUE,
+       '#options' => $bundle_options,
+       '#default_value' => $this->entity->get('productBundle'),
+@@ -172,7 +187,7 @@ class PrintfulStoreForm extends EntityForm {
+     }
+     if (!empty($productBundle) && isset($this->productBundles[$productBundle])) {
+       $form['attributeMapping']['#type'] = 'fieldset';
+-      $form['attributeMapping']['#title'] = $this->t('Attribute mapping');
++      $form['attributeMapping']['#title'] = $this->t('Attributes mapping');
+ 
+       $bundle = $this->productBundles[$productBundle];
+       $bundle_fields = $this->entityFieldManager->getFieldDefinitions('commerce_product_variation', $bundle->getVariationTypeId());
+@@ -186,17 +201,7 @@ class PrintfulStoreForm extends EntityForm {
+       }
+       $image_field_options = ['' => $this->t('-- Select image field --')];
+       foreach ($bundle_fields as $field_id => $bundle_field) {
+-        if (
+-          $bundle_field->getType() === 'image'
+-          ||
+-          (
+-            $bundle_field->getType() === 'entity_reference'
+-            &&
+-            $bundle_field->getItemDefinition()->getSetting('target_type') === 'media'
+-            &&
+-            in_array('image', $bundle_field->getItemDefinition()->getSetting('handler_settings')['target_bundles'])
+-          )
+-        ) {
++        if ($bundle_field->getType() === 'image') {
+           $image_field_options[$field_id] = $bundle_field->getLabel();
+         }
+       }
+@@ -210,7 +215,6 @@ class PrintfulStoreForm extends EntityForm {
+             '#type' => 'select',
+             '#title' => $label,
+             '#options' => $attribute_field_options,
+-            '#required' => TRUE,
+           ];
+ 
+           if (isset($defaults[$attribute])) {
+@@ -227,7 +231,6 @@ class PrintfulStoreForm extends EntityForm {
+           '#title' => $this->t('Image'),
+           '#options' => $image_field_options,
+           '#default_value' => isset($defaults['image']) ? $defaults['image'] : NULL,
+-          '#required' => TRUE,
+         ];
+       }
+     }
+@@ -266,7 +269,7 @@ class PrintfulStoreForm extends EntityForm {
+           ];
+         }
+       }
+-      catch (\Throwable $e) {
++      catch (PrintfulException $e) {
+         $form['webhooks']['summary'] = [
+           '#markup' => $this->t('Unable to fetch webhook info from the API: @error', [
+             '@error' => $e->getMessage(),
+@@ -283,11 +286,10 @@ class PrintfulStoreForm extends EntityForm {
+    * {@inheritdoc}
+    */
+   public function validateForm(array &$form, FormStateInterface $form_state) {
+-
+-    // Validate API key if changed.
+     $api_key = $form_state->getValue('apiKey');
+ 
+-    if (empty($this->entity->originalValues['apiKey']) || $this->entity->originalValues['apiKey'] !== $api_key) {
++    // Validate API key and base_url if changed.
++    if ($api_key !== $this->entity->get('apiKey')) {
+       $this->pf->setConnectionInfo([
+         'api_key' => $api_key,
+       ]);
+@@ -297,8 +299,8 @@ class PrintfulStoreForm extends EntityForm {
+           '@store' => $result['result']['name'],
+         ]));
+       }
+-      catch (\Throwable $e) {
+-        $form_state->setError($form['apiKey'], $this->t('Invalid connection data. Error: @error', [
++      catch (PrintfulException $e) {
++        $form_state->setError($form['connection'], $this->t('Invalid connection data. Error: @error', [
+           '@error' => $e->getMessage(),
+         ]));
+       }
+@@ -309,7 +311,7 @@ class PrintfulStoreForm extends EntityForm {
+    * Ajax callback.
+    */
+   public function ajaxForm(array $form, FormStateInterface $form_state) {
+-    return [$form['attributeMapping'], $form['webhooks']];
++    return $form['attributeMapping'];
+   }
+ 
+   /**
+@@ -338,7 +340,7 @@ class PrintfulStoreForm extends EntityForm {
+         $this->pf->unsetWebhooks();
+         if (!empty($event_types)) {
+           $this->pf->setWebhooks([
+-            'url' => $this->getRequest()->getSchemeAndHttpHost() . '/commerce-printful/webhooks',
++            'url' => $this->request->getSchemeAndHttpHost() . '/commerce-printful/webhooks',
+             'types' => $event_types,
+           ]);
+         }
+diff --git a/src/OrderItemsTrait.php b/src/OrderItemsTrait.php
+index 95f6f63..ddcc991 100644
+--- a/src/OrderItemsTrait.php
++++ b/src/OrderItemsTrait.php
+@@ -3,7 +3,7 @@
+ namespace Drupal\commerce_printful;
+ 
+ use Drupal\commerce_shipping\Entity\ShipmentInterface;
+-use Drupal\commerce_currency_resolver\PriceExchangerCalculator;
++use Drupal\commerce_currency_resolver\CurrencyHelper;
+ use Drupal\commerce_printful\Entity\PrintfulStoreInterface;
+ 
+ /**
+@@ -90,7 +90,7 @@ trait OrderItemsTrait {
+ 
+             // Convert currency to Printful default if required.
+             if ($totalPrice->getCurrencyCode() !== $pf_currency) {
+-              $totalPrice = $this->priceExchangerCalculator->priceConversion($totalPrice, $pf_currency);
++              $totalPrice = CurrencyHelper::priceConversion($totalPrice, $pf_currency);
+             }
+             $item['name'] = $orderItem->label();
+             $item['retail_price'] = (string) $totalPrice;
+@@ -105,6 +105,40 @@ trait OrderItemsTrait {
+     return $output;
+   }
+ 
++  /**
++   * Add recipient only for tax calcuation.
++   *
++   * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
++   *   A shipment entity.
++   * @param bool $more
++   *   Should more data be included (needed for order creation)?
++   */
++  protected function getTaxRequestData(ShipmentInterface $shipment) {
++    $output = [];
++
++    if (!$shipment->getShippingProfile()->get('address')->isEmpty()) {
++      $address = $shipment->getShippingProfile()->get('address')->first()->getValue();
++      $output['recipient'] = [
++        'address1' => $address['address_line1'],
++        'city' => $address['locality'],
++        'country_code' => $address['country_code'],
++        'state_code' => !empty($address['administrative_area']) ? $address['administrative_area'] : NULL,
++        'zip' => $address['postal_code'],
++      ];
++
++      $printful_stores = \Drupal::entityTypeManager()->getStorage('printful_store')->loadMultiple();
++      // Dumb for now.
++      // Could possibly check like this, but may need method on PrintfulStore
++      // to fetch the protected PrintfulStore->commerceStoreId.
++      // if (in_array($printful_store->commerceStoreId, variation->getStores())
++      $printful_store = reset($printful_stores);
++      $this->setPrintfulStore($printful_store);
++      $output['_printful_store'] = $printful_store;
++    }
++
++    return $output;
++  }
++
+   /**
+    * {@inheritdoc}
+    */
+diff --git a/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php b/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
+index 31aa1d5..ba3b6ea 100644
+--- a/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
++++ b/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
+@@ -4,7 +4,6 @@ namespace Drupal\commerce_printful\Plugin\Commerce\ShippingMethod;
+ 
+ use Drupal\commerce_shipping\Plugin\Commerce\ShippingMethod\ShippingMethodBase;
+ use Drupal\commerce_currency_resolver\Plugin\Commerce\CommerceCurrencyResolverAmountTrait;
+-use Drupal\commerce_currency_resolver\PriceExchangerCalculator;
+ use Drupal\commerce_printful\OrderItemsTrait;
+ use Drupal\commerce_printful\Service\PrintfulInterface;
+ use Psr\Log\LoggerInterface;
+@@ -14,11 +13,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
+ use Drupal\commerce_price\Price;
+ use Drupal\commerce_shipping\Entity\ShipmentInterface;
+ use Drupal\commerce_shipping\PackageTypeManagerInterface;
++use Drupal\commerce_shipping\Event\ShippingEvents;
++use Drupal\commerce_shipping\Event\ShippingRatesEvent;
+ use Drupal\state_machine\WorkflowManagerInterface;
+ use Drupal\commerce_shipping\ShippingRate;
+ use Drupal\Core\Form\FormStateInterface;
+ use Drupal\commerce_printful\Exception\PrintfulException;
+ 
++
+ /**
+  * Provides the FlatRate shipping method.
+  *
+@@ -56,11 +58,11 @@ class PrintfulShipping extends ShippingMethodBase {
+   protected $integrationSettings;
+ 
+   /**
+-   * The Price Exchanger Calculator.
++   * The event dispatcher.
+    *
+-   * @var \Drupal\commerce_currency_resolver\PriceExchangerCalculator
++   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+    */
+-  protected $priceExchangerCalculator;
++  protected $eventDispatcher;
+ 
+   /**
+    * Constructor.
+@@ -81,8 +83,6 @@ class PrintfulShipping extends ShippingMethodBase {
+    *   The logger factory service.
+    * @param \Drupal\Core\Config\ImmutableConfig $config
+    *   Config for this module.
+-   * @param \Drupal\commerce_currency_resolver\PriceExchangerCalculator $price_exchanger_calculator
+-   *   The Price exchange calculator service.
+    */
+   public function __construct(
+     array $configuration,
+@@ -92,15 +92,14 @@ class PrintfulShipping extends ShippingMethodBase {
+     WorkflowManagerInterface $workflow_manager,
+     PrintfulInterface $pf,
+     LoggerInterface $logger,
+-    ImmutableConfig $config,
+-    PriceExchangerCalculator $price_exchanger_calculator
++    ImmutableConfig $config
+   ) {
+     parent::__construct($configuration, $plugin_id, $plugin_definition, $package_type_manager, $workflow_manager);
+ 
+     $this->pf = $pf;
+     $this->logger = $logger;
+     $this->integrationSettings = $config->get('product_sync_data');
+-    $this->priceExchangerCalculator = $price_exchanger_calculator;
++    $this->eventDispatcher = \Drupal::service('event_dispatcher');
+   }
+ 
+   /**
+@@ -115,8 +114,7 @@ class PrintfulShipping extends ShippingMethodBase {
+       $container->get('plugin.manager.workflow'),
+       $container->get('commerce_printful.printful'),
+       $container->get('logger.factory')->get('commerce_printful'),
+-      $container->get('config.factory')->get('commerce_printful.settings'),
+-      $container->get('commerce_currency_resolver.calculator')
++      $container->get('config.factory')->get('commerce_printful.settings')
+     );
+   }
+ 
+@@ -165,7 +163,7 @@ class PrintfulShipping extends ShippingMethodBase {
+           if ($this->shouldCurrencyRefresh($this->currentCurrency())) {
+             // If current currency does not match to shipment code.
+             if ($this->currentCurrency() !== $price->getCurrencyCode()) {
+-              $price = $this->getPrice($price);
++              $price = $this->getPrice($price, $this->currentCurrency());
+             }
+           }
+ 
+@@ -178,6 +176,11 @@ class PrintfulShipping extends ShippingMethodBase {
+         }
+         // Sort by price ASC.
+         ksort($rates);
++
++        // Fire the proper commerce_shipping event on rate calculation.
++        $event = new ShippingRatesEvent($rates, $this->parentEntity, $shipment);
++        $this->eventDispatcher->dispatch(ShippingEvents::SHIPPING_RATES, $event);
++
+       }
+       catch (PrintfulException $e) {
+         $this->logger->error(
+diff --git a/src/Service/OrderIntegrator.php b/src/Service/OrderIntegrator.php
+index 873d0d7..19d685a 100644
+--- a/src/Service/OrderIntegrator.php
++++ b/src/Service/OrderIntegrator.php
+@@ -6,8 +6,11 @@ use Drupal\commerce_printful\OrderItemsTrait;
+ use Drupal\Core\StringTranslation\StringTranslationTrait;
+ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+ use Drupal\commerce_printful\Entity\PrintfulStoreInterface;
++use Drupal\commerce_order\Adjustment;
++// use Drupal\commerce_order\Entity\Order;
+ use Drupal\commerce_order\Entity\OrderInterface;
+ use Drupal\commerce_printful\Exception\PrintfulException;
++use Drupal\commerce_shipping\Entity\ShipmentInterface;
+ 
+ /**
+  * Printful order integration service implementation.
+@@ -115,4 +118,71 @@ class OrderIntegrator implements OrderIntegratorInterface {
+     }
+   }
+ 
++  /**
++   * {@inheritdoc}
++   */
++  public function addPrintfulTax(ShipmentInterface $shipment, OrderInterface $order) {
++    if (TRUE) {
++    // Shipment isn't determined yet.  Instead look at if order type is right, by products or store?
++    // if ($shipment->getShippingMethod()->getPlugin()->getPluginId() === 'printful_shipping') {
++
++      $request_data = $this->getTaxRequestData($shipment);
++      if (!empty($request_data)) {
++        // Set API key if not default.
++        // @see Drupal\commerce_printful\Service\OrderIntegrator::createPrintfulOrder().
++        if (!empty($request_data['_printful_store'])) {
++          $this->pf->setConnectionInfo([
++            'api_key' => $request_data['_printful_store']->get('apiKey'),
++          ]);
++          unset($request_data['_printful_store']);
++        }
++
++        try {
++          $result = $this->pf->taxRates($request_data);
++          $taxInfo = $result['result'];
++          // Example return:
++          // {
++          //   "code": 200,
++          //   "result": {
++          //       "required": true,
++          //       "rate": 0.0725,
++          //       "shipping_taxable": true
++          //   },
++          //   "extra": []
++          // }
++
++          // If not required, skip?
++          if (!$taxInfo['required'] || empty($taxInfo['rate'])) {
++            return;
++          }
++
++          /** @var \Drupal\commerce_price\Price $subtotal */
++          $subtotal = $order->getSubtotalPrice();
++          $taxAmount = $subtotal->multiply($taxInfo['rate']);
++          // Solves issue with stale order.
++          // $order = Order::load($order->id());
++          $order->addAdjustment(new Adjustment([
++            'type' => 'tax',
++            'label' => 'Tax',
++            'amount' => $taxAmount,
++            // 'percentage' => $percentage->getNumber(),
++            'source_id' => $order->id(),
++            'included' => FALSE,
++          ]));
++          $order->setRefreshState(OrderInterface::REFRESH_SKIP);
++          $order->save();
++        }
++        catch (PrintfulException $e) {
++          $this->logger->error(
++            "Couldn't load tax data. Error: @details",
++            [
++              '@details' => $e->getFullInfo(),
++            ]
++          );
++        }
++      }
++
++    }
++  }
++
+ }
+diff --git a/src/Service/Printful.php b/src/Service/Printful.php
+index 2366906..3534ded 100644
+--- a/src/Service/Printful.php
++++ b/src/Service/Printful.php
+@@ -25,13 +25,14 @@ class Printful implements PrintfulInterface {
+     'productsVariant' => [
+       'path' => 'products/variant',
+     ],
+-    'products' => [
+-      'path' => 'products',
+-    ],
+     'shippingRates' => [
+       'path' => 'shipping/rates',
+       'method' => 'POST',
+     ],
++    'taxRates' => [
++      'path' => 'tax/rates',
++      'method' => 'POST',
++    ],
+     'createOrder' => [
+       'path' => 'orders',
+       'method' => 'POST',
+diff --git a/src/Service/ProductIntegrator.php b/src/Service/ProductIntegrator.php
+index 761b0e2..97400fc 100644
+--- a/src/Service/ProductIntegrator.php
++++ b/src/Service/ProductIntegrator.php
+@@ -3,7 +3,6 @@
+ namespace Drupal\commerce_printful\Service;
+ 
+ use Drupal\Core\StringTranslation\StringTranslationTrait;
+-use Drupal\Core\Entity\EntityFieldManagerInterface;
+ use Drupal\Core\Entity\EntityTypeManagerInterface;
+ use Drupal\Core\File\FileSystemInterface;
+ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+@@ -12,8 +11,6 @@ use Drupal\commerce_product\Entity\ProductInterface;
+ use Drupal\commerce_printful\Exception\PrintfulException;
+ use Drupal\commerce_price\Price;
+ use Drupal\commerce_product\Entity\ProductVariationInterface;
+-use Drupal\file\Entity\File;
+-use Drupal\media\Entity\Media;
+ 
+ /**
+  * Printful product integration service implementation.
+@@ -50,13 +47,6 @@ class ProductIntegrator implements ProductIntegratorInterface {
+    */
+   protected $logger;
+ 
+-  /**
+-   * The entity field manager.
+-   *
+-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+-   */
+-  protected $entityFieldManager;
+-
+   /**
+    * Commerce store entity.
+    *
+@@ -89,21 +79,17 @@ class ProductIntegrator implements ProductIntegratorInterface {
+    *   The file system service.
+    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+    *   The logger factory.
+-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+-   *   The entity field manager.
+    */
+   public function __construct(
+     PrintfulInterface $pf,
+     EntityTypeManagerInterface $entityTypeManager,
+     FileSystemInterface $fileSystem,
+-    LoggerChannelFactoryInterface $logger_factory,
+-    EntityFieldManagerInterface $entity_field_manager
++    LoggerChannelFactoryInterface $logger_factory
+   ) {
+     $this->pf = $pf;
+     $this->entityTypeManager = $entityTypeManager;
+     $this->fileSystem = $fileSystem;
+     $this->logger = $logger_factory->get('commerce_printful');
+-    $this->entityFieldManager = $entity_field_manager;
+   }
+ 
+   /**
+@@ -188,20 +174,11 @@ class ProductIntegrator implements ProductIntegratorInterface {
+ 
+     // Get product data including variants.
+     $result = $this->pf->syncProducts('@' . $printful_id);
+-    $sync_variants = $result['result']['sync_variants'];
+-    $printful_product_id = $sync_variants[0]['product']['product_id'];
+-    // Get product variants.
+-    $variant_data = $this->pf->products($printful_product_id);
+ 
+     $variations = [];
+     $variation_bundle = $this->entityTypeManager->getStorage('commerce_product_type')->load($product->bundle())->getVariationTypeId();
+-    foreach ($sync_variants as $printful_variant) {
+-      // Get required params from $variant_data.
+-      $variant_params = array_filter($variant_data['result']['variants'], function ($variant) use ($printful_variant) {
+-        return ($variant['id'] == $printful_variant['product']['variant_id']);
+-      });
+-      $variant_params = array_values($variant_params)[0];
+-      $variation = $this->syncProductVariant($printful_variant, $variant_params, $product, $variation_bundle);
++    foreach ($result['result']['sync_variants'] as $printful_variant) {
++      $variation = $this->syncProductVariant($printful_variant, $product, $variation_bundle);
+       $variations[$variation->id()] = $variation;
+     }
+     $product->setVariations($variations);
+@@ -219,15 +196,17 @@ class ProductIntegrator implements ProductIntegratorInterface {
+   /**
+    * {@inheritdoc}
+    */
+-  public function syncProductVariant(array $printful_variant, array $variant_parameters, ProductInterface $product, $variation_bundle) {
++  public function syncProductVariant(array $printful_variant, ProductInterface $product, $variation_bundle) {
+     $variationStorage = $this->entityTypeManager->getStorage('commerce_product_variation');
++    $result = $this->pf->productsVariant($printful_variant['variant_id']);
++    $variant_parameters = $result['result']['variant'];
+ 
+     $product_variations = $variationStorage->loadByProperties([
+       'printful_reference' => $printful_variant['external_id'],
+     ]);
+ 
+     $sku = 'PF-' . $printful_variant['sku'];
+-    if ($printful_variant['sku'] !== NULL && empty($product_variations)) {
++    if (empty($product_variations)) {
+       // Try to get by SKU.
+       $product_variations = $variationStorage->loadByProperties([
+         'sku' => $sku,
+@@ -324,61 +303,7 @@ class ProductIntegrator implements ProductIntegratorInterface {
+ 
+         break;
+ 
+-      case 'entity_reference':
+-
+-        // Remove existing images if any.
+-        foreach ($variation->{$field_name} as $item) {
+-          // Delete the target media entities.
+-          $item->get('entity')->getTarget()->getValue()->delete();
+-          // Delete the references.
+-          $item->delete();
+-        }
+-
+-        $media_image_field = NULL;
+-
+-        // Determine the image field name.
+-        $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions('media');
+-        foreach ($field_storage_definitions as $media_field_name => $field_storage_definition) {
+-          if ($field_storage_definition->getType() === 'image' && $field_storage_definition->getName() !== 'thumbnail') {
+-            $media_image_field = $field_storage_definition;
+-          }
+-        }
+-
+-        if (!$media_image_field) {
+-          throw new PrintfulException('Unable to determine destination field for media entity.');
+-        }
+-
+-        $file_directory = $media_image_field->getSetting('file_directory');
+-        $uri_scheme = $media_image_field->getSetting('uri_scheme');
+-        $destination_dir = $uri_scheme . '://' . $file_directory;
+-
+-        if (!$this->fileSystem->prepareDirectory($destination_dir, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+-          throw new PrintfulException(sprintf('Variant image target directory (%s) problem.', $destination_dir));
+-        }
+-
+-        $destination = $destination_dir . '/' . $file_data['filename'];
+-
+-        $file = file_save_data(file_get_contents($file_data['preview_url']), $destination, FileSystemInterface::EXISTS_RENAME);
+-        if (!$file) {
+-          throw new PrintfulException('Variant image save problem.');
+-        }
+-        $file->save();
+-
+-        // Create the media entity.
+-        $media_image_field_name = $media_image_field->getName();
+-        $media = Media::create([
+-          'bundle' => 'image',
+-          $media_image_field_name => [
+-            'target_id' => $file->id(),
+-          ],
+-        ]);
+-        // Save the media entity.
+-        $media->save();
+-        // Set the field value.
+-        $variation->{$field_name}->setValue([['target_id' => $media->id()]]);
+-
+-        break;
+-
++      // TODO: add media support.
+       default:
+         throw new PrintfulException(sprintf('Unsupported image type: %s', $field_type));
+     }
+diff --git a/src/Service/ProductIntegratorInterface.php b/src/Service/ProductIntegratorInterface.php
+index d408a3f..25ff8af 100644
+--- a/src/Service/ProductIntegratorInterface.php
++++ b/src/Service/ProductIntegratorInterface.php
+@@ -83,13 +83,11 @@ interface ProductIntegratorInterface {
+    *
+    * @param array $printful_variant
+    *   Printful variant data array as returned by the Printful API.
+-   * @param array $variant_parameters
+-   *   A array of variant parameters as returned by the Printful API.
+    * @param \Drupal\commerce_product\Entity\ProductInterface $product
+    *   The parent product.
+    * @param string $variation_bundle
+    *   The type of the Commerce product variation that is being synced.
+    */
+-  public function syncProductVariant(array $printful_variant, array $variant_parameters, ProductInterface $product, $variation_bundle);
++  public function syncProductVariant(array $printful_variant, ProductInterface $product, $variation_bundle);
+ 
+ }

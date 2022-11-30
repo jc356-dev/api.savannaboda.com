@@ -1,0 +1,32 @@
+uuid: ac11bdaf-11c1-4d19-88ab-6677199708f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.promo_codes.body
+    - field.field.node.promo_codes.field_promo_author
+    - node.type.promo_codes
+  module:
+    - text
+    - user
+id: node.promo_codes.teaser
+targetEntityType: node
+bundle: promo_codes
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_promo_author: true

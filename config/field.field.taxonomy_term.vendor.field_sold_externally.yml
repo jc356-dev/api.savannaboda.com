@@ -1,0 +1,23 @@
+uuid: b542c377-c67d-4fbd-afbf-8f4f51414afb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_sold_externally
+    - taxonomy.vocabulary.vendor
+id: taxonomy_term.vendor.field_sold_externally
+field_name: field_sold_externally
+entity_type: taxonomy_term
+bundle: vendor
+label: 'Sold Externally'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'True'
+  off_label: 'False'
+field_type: boolean

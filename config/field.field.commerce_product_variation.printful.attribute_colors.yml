@@ -1,0 +1,28 @@
+uuid: 608f5460-ed1d-41ad-b0b6-ffb4575e8ea1
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_attribute.colors
+    - commerce_product.commerce_product_variation_type.printful
+    - field.storage.commerce_product_variation.attribute_colors
+id: commerce_product_variation.printful.attribute_colors
+field_name: attribute_colors
+entity_type: commerce_product_variation
+bundle: printful
+label: colors
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product_attribute_value'
+  handler_settings:
+    target_bundles:
+      colors: colors
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

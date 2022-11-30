@@ -1,0 +1,14 @@
+uuid: 29155bd0-e5af-4eb6-afd6-7b57c156b1eb
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: 3vA4FKQ1Qu8B1R8UdGPnmMfJrYO6Y6uMqeNgDgXxods
+id: default
+label: Default
+orderItemType: default
+generateTitle: false
+traits:
+  - purchasable_entity_dimensions
+  - purchasable_entity_shippable
+locked: false

@@ -1,0 +1,13 @@
+name: 'Rest Toolkit: Commerce'
+type: module
+description: 'A simple approach to REST endpoints for Drupal Commerce.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+configure: entity.rtc_custom_adjustment.collection
+package: 'Web services'
+dependencies:
+  - json_field
+  - rest_toolkit
+  - commerce
+  - commerce_order
+  - commerce_shipping

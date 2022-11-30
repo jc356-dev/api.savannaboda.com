@@ -1,0 +1,448 @@
+<?php
+
+/**
+ * @file
+ * Contains rest_toolkit_commerce.module.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function rest_toolkit_commerce_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the rest_toolkit_commerce module.
+    case 'help.page.rest_toolkit_commerce':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('A simple approach to REST endpoints for Drupal Commerce.') . '</p>';
+
+      $output .= '<hr />';
+      $output .= '<h3>' . t('Shopping Cart: ') . '</h3>';
+      $output .= '<p>' . t('The json_field "rtapi_cart" has been added to the User entity for storing/retrieving Commerce product_variations for purchase.') . '</p>';
+
+      $output .= '<p>' . t('You can get/set cart data the same way you would access any field on the User entity through the field "rtapi_cart" .') . '</p>';
+
+      $output .= '<p>' . t('There is no predefined structure for "rtapi_cart", but we suggest something with at least this data:') . '</p>';
+
+      $output .= '<pre>' . '
+"orders": [
+    {
+      "store": 222,
+      "variations": [
+        {
+          "id": 123,
+          "image": "https://example.com/product_image.jpg",
+          "qty": 1
+        }
+      ]
+    }
+  ]'
+   . '</pre>';
+
+   $output .= '<hr />';
+
+      // $output .= '<h3>' . t('Routes') . '</h3>';
+      // $output .= '<p><strong>' . t('Routes:') . '</strong></p>';
+
+      $routeList = [
+        'rest_toolkit_commerce.commerce.order.post' => [
+          'url' => 'rtapi/v1/commerce/order',
+          'method' => 'POST',
+          'description' => 'Create Order',
+          'request_payload' => '
+{
+  mail: "something@example.com",  // Optional, for guest checkout.
+  uid: 59,  // Optional, for guest checkout.
+  billing_profile: 5,  // Profile id if using existing address, OR:
+  // If creating new billing_address:
+  "billing_address": {
+    "country_code" => "us",
+    "address_line1" => "1234 Some Street",
+    "address_line2" => "Suite 202",
+    "locality" => "Carlsbad",
+    "administrative_area" => "CA",
+    "postal_code" => "92008",
+  },
+  shipping_same_as_billing: true/false,
+  shipping_profile: 5,  // Profile id if using existing address, OR:
+  shipping_address: {},  // If creating new address.
+  orders: [
+    {
+      store: 222,
+      variations: [
+        {
+          id: 123,
+          qty: 1
+        }
+      ]
+    }
+  ]
+}',
+      'response' => '
+[
+  {
+    "order_id": 23,
+    "uuid": "15c0410a-2ddc-4076-8a8b-f5f7792bc6d1",
+    "type": {
+      "target_id": "default"
+    },
+    "order_number": false,
+    "store_id": {
+      "target_id": 1
+    },
+    "uid": {
+      "target_id": "1"
+    },
+    "mail": [],
+    "ip_address": "xxx.xxx.xxx.xxx",
+    "billing_profile": {
+      "profile_id": 72,
+      "uuid": "c54be6e8-a09c-4e22-b0f6-d876979e09a0",
+      "revision_id": 72,
+      "type": {
+        "target_id": "customer"
+      },
+      "revision_created": 1608655809,
+      "revision_user": {
+        "target_id": "1"
+      },
+      "revision_log_message": false,
+      "status": true,
+      "uid": {
+        "target_id": "0"
+      },
+      "is_default": false,
+      "data": false,
+      "created": 1608655809,
+      "changed": 1608655809,
+      "revision_default": true,
+      "address": [
+        {
+          "langcode": null,
+          "country_code": "US",
+          "administrative_area": "CA",
+          "locality": "Carlsbad",
+          "dependent_locality": null,
+          "postal_code": "92008",
+          "sorting_code": null,
+          "address_line1": "12345 Billing St.",
+          "address_line2": "",
+          "organization": null,
+          "given_name": null,
+          "additional_name": null,
+          "family_name": null
+        }
+      ],
+      "tax_number": []
+    },
+    "order_items": [
+      {
+        "target_id": "23"
+      }
+    ],
+    "adjustments": [
+      null
+    ],
+    "total_price": {
+      "number": 5.99,
+      "currency_code": "USD"
+    },
+    "total_paid": false,
+    "state": "draft",
+    "data": {
+      "paid_event_dispatched": false
+    },
+    "locked": false,
+    "created": 1608655809,
+    "changed": 1608655809,
+    "placed": false,
+    "completed": false,
+    "cart": false,
+    "checkout_flow": false,
+    "checkout_step": false,
+    "payment_gateway": false,
+    "payment_method": false,
+    "field_shipping_profile": [
+      {
+        "profile_id": 71,
+        "uuid": "9de10f53-2add-4068-8da7-fa317e30f2f8",
+        "revision_id": 71,
+        "type": {
+          "target_id": "customer"
+        },
+        "revision_created": 1608655809,
+        "revision_user": {
+          "target_id": "1"
+        },
+        "revision_log_message": false,
+        "status": true,
+        "uid": {
+          "target_id": "1"
+        },
+        "is_default": false,
+        "data": false,
+        "created": 1608655809,
+        "changed": 1608655809,
+        "revision_default": true,
+        "address": [
+          {
+            "langcode": null,
+            "country_code": "US",
+            "administrative_area": "CA",
+            "locality": "Carlsbad",
+            "dependent_locality": null,
+            "postal_code": "92008",
+            "sorting_code": null,
+            "address_line1": "12345 Shipping St.",
+            "address_line2": "",
+            "organization": null,
+            "given_name": null,
+            "additional_name": null,
+            "family_name": null
+          }
+        ],
+        "tax_number": []
+      }
+    ],
+    "shipments": [],
+    "adjustments_rtapi": [
+      {
+        "type": "custom",
+        "label": "Shipping",
+        "amount": {
+          "number": "0",
+          "currency_code": "USD"
+        },
+        "percentage": null,
+        "source_id": null,
+        "included": false,
+        "locked": true
+      }
+    ]
+  }
+]
+      ',
+        ],
+
+        'rest_toolkit_commerce.commerce.order.patch' => [
+          'url' => 'rtapi/v1/commerce/order/{order}',
+          'method' => 'PATCH',
+          'description' => 'Finalize & Pay Order',
+          'request_payload' => '
+Stripe (commerce_stripe):
+{
+  "payment": {
+    "number": "4444424444444440",
+    "expiration": {
+       "month": "12",
+       "year": "2024"
+     },
+    "name_on_account": "Jeff Testerson",
+    "security_code": "222",
+  }
+}
+
+
+Square:
+{
+  "payment": {
+    "payment_method_nonce": "{GET FROM SQUARE JS}",
+    "card_type": "VISA",
+    "exp_month": 12,
+    "exp_year": 12,
+    "last4": 1111
+  }
+}
+',
+          'response' => '
+{
+  "order": {
+    "order_id": 58,
+    "uuid": "04393b89-8f5e-463e-95c7-45900779d591",
+    "type": {
+      "target_id": "default"
+    },
+    "order_number": "58",
+    "store_id": {
+      "target_id": "1"
+    },
+    "uid": {
+      "target_id": "1"
+    },
+    "mail": [],
+    "ip_address": "192.168.1.1",
+    "billing_profile": {
+      "target_id": "139",
+      "target_revision_id": "139"
+    },
+    "order_items": [
+      {
+        "target_id": "53"
+      }
+    ],
+    "adjustments": [
+      {
+        "type": "custom",
+        "label": "Some Custom Shipping",
+        "amount": {
+          "number": 7.95,
+          "currency_code": "USD"
+        },
+        "percentage": null,
+        "source_id": null,
+        "included": false,
+        "locked": true
+      }
+    ],
+    "total_price": {
+      "number": 13.94,
+      "currency_code": "USD"
+    },
+    "total_paid": false,
+    "state": "draft",
+    "data": {
+      "paid_event_dispatched": false
+    },
+    "locked": false,
+    "created": 1609379724,
+    "changed": 1609379733,
+    "placed": 1609379729,
+    "completed": false,
+    "cart": false,
+    "checkout_flow": false,
+    "checkout_step": false,
+    "payment_gateway": {
+      "target_id": "your_gateway_id"
+    },
+    "payment_method": {
+      "target_id": "7"
+    },
+    "field_shipping_profile": [
+      {
+        "profile_id": 138,
+        "uuid": "1b073de2-0062-48cb-ace1-714f91eb37fc",
+        "revision_id": 138,
+        "type": {
+          "target_id": "customer"
+        },
+        "revision_created": 1609379724,
+        "revision_user": {
+          "target_id": "1"
+        },
+        "revision_log_message": false,
+        "status": true,
+        "uid": {
+          "target_id": "1"
+        },
+        "is_default": false,
+        "data": false,
+        "created": 1609379724,
+        "changed": 1609379724,
+        "revision_default": true,
+        "address": [
+          {
+            "langcode": null,
+            "country_code": "US",
+            "administrative_area": "CA",
+            "locality": "Carlsbad",
+            "dependent_locality": null,
+            "postal_code": "92008",
+            "sorting_code": null,
+            "address_line1": "12345 Shipping St.",
+            "address_line2": "",
+            "organization": null,
+            "given_name": null,
+            "additional_name": null,
+            "family_name": null
+          }
+        ],
+        "tax_number": []
+      }
+    ],
+    "shipments": []
+  },
+  "payment": {
+    "payment_id": 5,
+    "uuid": "adeb948d-fd7c-46e5-83d9-4d35c552956a",
+    "type": "payment_default",
+    "payment_gateway": {
+      "target_id": "your_gateway_id"
+    },
+    "payment_gateway_mode": "test",
+    "payment_method": {
+      "target_id": "7"
+    },
+    "order_id": {
+      "target_id": "58"
+    },
+    "remote_id": "SomeTransactionID",
+    "remote_state": false,
+    "amount": {
+      "number": 13.94,
+      "currency_code": "USD"
+    },
+    "refunded_amount": {
+      "number": 0,
+      "currency_code": "USD"
+    },
+    "state": "completed",
+    "authorized": false,
+    "expires": 0,
+    "completed": 1609379728,
+    "test": false,
+    "captured": false
+  }
+}
+
+          ',
+        ]
+      ];
+
+
+      foreach ($routeList as $route) {
+        $output .= '<h3>' . t('Route: ') . $route['description'] . '</h3>';
+
+        $output .= '<h6>' . t('URL:') . '</h6>';
+        $output .= '<pre>' . $route['url'] . '</pre>';
+
+        $output .= '<h6>' . t('Method:') . '</h6>';
+        $output .= '<pre>' . $route['method'] . '</pre>';
+
+
+        $output .= '<h6>' . t('Request Payload (json):') . '</h6>';
+        $output .= '<pre>' . $route['request_payload'] . '</pre>';
+
+        $output .= '<h6>' . t('Response:') . '</h6>';
+        $output .= '<pre>' . $route['response'] . '</pre>';
+
+        $output .= '<hr />';
+      }
+
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function rest_toolkit_commerce_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'user') {
+    $fields['rtapi_cart'] = BaseFieldDefinition::create('json')
+      ->setLabel(t('RTAPI Shopping Cart'))
+      ->setCardinality(1)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayConfigurable('form', TRUE);
+
+    // @todo: Move this into an install command with this:
+    /*\Drupal::entityDefinitionUpdateManager()
+      ->installFieldStorageDefinition('rtapi_cart', 'user', 'rest_toolkit_commerce', $fields['rtapi_cart']);*/
+
+    return $fields;
+  }
+}

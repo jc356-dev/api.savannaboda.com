@@ -1,0 +1,9 @@
+{
+    "name": "drupal/commerce_square_catalog",
+    "description": "Commerce Square Catalog",
+    "type": "drupal-custom-module",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "square/square": "^16.0"
+    }
+}

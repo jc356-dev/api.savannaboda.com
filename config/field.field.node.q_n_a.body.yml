@@ -1,0 +1,23 @@
+uuid: de202647-7d4e-4446-897d-329897a86799
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.q_n_a
+  module:
+    - text
+id: node.q_n_a.body
+field_name: body
+entity_type: node
+bundle: q_n_a
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

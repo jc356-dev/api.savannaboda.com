@@ -1,0 +1,176 @@
+uuid: 5f38688b-e418-4dfd-b0b3-2654fd4b63f2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.peels.body
+    - field.field.node.peels.field_appointment_length
+    - field.field.node.peels.field_cost
+    - field.field.node.peels.field_eyebrow
+    - field.field.node.peels.field_friendly_url
+    - field.field.node.peels.field_headline
+    - field.field.node.peels.field_how
+    - field.field.node.peels.field_image
+    - field.field.node.peels.field_media
+    - field.field.node.peels.field_number_or_appointments
+    - field.field.node.peels.field_who
+    - field.field.node.peels.field_why
+    - image.style.thumbnail
+    - node.type.peels
+  module:
+    - commerce_price
+    - fieldable_path
+    - image
+    - path
+    - text
+id: node.peels.default
+targetEntityType: node
+bundle: peels
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 121
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_appointment_length:
+    weight: 123
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_cost:
+    weight: 124
+    settings: {  }
+    third_party_settings: {  }
+    type: commerce_price_default
+    region: content
+  field_eyebrow:
+    weight: 125
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_friendly_url:
+    weight: 132
+    settings: {  }
+    third_party_settings: {  }
+    type: fieldable_path_widget
+    region: content
+  field_headline:
+    weight: 126
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_how:
+    weight: 127
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_image:
+    weight: 128
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_media:
+    weight: 129
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_number_or_appointments:
+    weight: 122
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_who:
+    weight: 130
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_why:
+    weight: 131
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      match_limit: 10
+    region: content
+    third_party_settings: {  }
+hidden: {  }

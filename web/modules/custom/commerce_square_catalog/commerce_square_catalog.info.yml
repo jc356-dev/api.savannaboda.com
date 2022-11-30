@@ -1,0 +1,8 @@
+name: Commerce Square Catalog
+type: module
+description: Integrate with Square Catalog features.
+package: Commerce (contrib)
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - commerce_square

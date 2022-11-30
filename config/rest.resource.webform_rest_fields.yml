@@ -1,0 +1,18 @@
+uuid: e7f6e5cf-72b6-4ad3-ac4d-b884875d0619
+langcode: en
+status: true
+dependencies:
+  module:
+    - jwt
+    - serialization
+    - webform_rest
+id: webform_rest_fields
+plugin_id: webform_rest_fields
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - jwt_auth

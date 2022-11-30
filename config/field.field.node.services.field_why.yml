@@ -1,0 +1,19 @@
+uuid: 908217c3-9f7a-4a65-b7f8-2a6a4a931916
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_why
+    - node.type.services
+id: node.services.field_why
+field_name: field_why
+entity_type: node
+bundle: services
+label: 'Why Savanna Loves It'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

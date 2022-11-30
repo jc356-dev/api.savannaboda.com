@@ -1,0 +1,8 @@
+uuid: aed969de-5a62-4a7f-a226-32e48b7edd34
+langcode: en
+status: true
+dependencies: {  }
+id: handling
+label: Handling
+description: '3% Handling fee for SBA'
+adjustment_value: '3'

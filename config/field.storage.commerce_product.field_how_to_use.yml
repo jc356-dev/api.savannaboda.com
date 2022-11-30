@@ -1,0 +1,23 @@
+uuid: a9a4c67e-06b5-4e42-b08c-68a49f3079f9
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - field_permissions
+    - text
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: commerce_product.field_how_to_use
+field_name: field_how_to_use
+entity_type: commerce_product
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

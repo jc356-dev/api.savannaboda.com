@@ -1,0 +1,22 @@
+uuid: beaa2f74-39e3-4875-a38d-3df932bce745
+langcode: en
+status: true
+dependencies:
+  module:
+    - file
+    - jwt
+    - serialization
+    - users_jwt
+id: entity.file
+plugin_id: 'entity:file'
+granularity: resource
+configuration:
+  methods:
+    - GET
+    - POST
+    - DELETE
+  formats:
+    - json
+  authentication:
+    - jwt_auth
+    - users_jwt_auth

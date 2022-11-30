@@ -1,0 +1,5 @@
+entity.rtc_custom_adjustment.add_form:
+  route_name: 'entity.rtc_custom_adjustment.add_form'
+  title: 'Add RTC Custom Adjustment'
+  appears_on:
+    - entity.rtc_custom_adjustment.collection

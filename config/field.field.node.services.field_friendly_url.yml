@@ -1,0 +1,23 @@
+uuid: 7b172e47-4913-4e21-a345-c685de5e7fa6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_friendly_url
+    - node.type.services
+  module:
+    - fieldable_path
+id: node.services.field_friendly_url
+field_name: field_friendly_url
+entity_type: node
+bundle: services
+label: 'Friendly URL'
+description: 'Auto Generated Friendly URL'
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

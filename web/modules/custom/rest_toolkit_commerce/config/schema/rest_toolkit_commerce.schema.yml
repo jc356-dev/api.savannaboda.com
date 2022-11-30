@@ -1,0 +1,16 @@
+rest_toolkit_commerce.rtc_custom_adjustment.*:
+  type: config_entity
+  label: RTC Custom Adjustment
+  mapping:
+    id:
+      type: string
+      label: ID
+    label:
+      type: label
+      label: Label
+    uuid:
+      type: string
+    description:
+      type: string
+    adjustment_value:
+      type: string

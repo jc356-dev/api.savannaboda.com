@@ -1,0 +1,152 @@
+{
+    "name": "drupal/recommended-project",
+    "description": "Project template for Drupal 8 projects with a relocated document root",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/drupal",
+    "support": {
+        "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
+        "chat": "https://www.drupal.org/node/314178"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.7",
+        "drupal/admin_toolbar": "^3.0",
+        "drupal/autoban": "^1.7",
+        "drupal/backup_migrate": "^5.0",
+        "drupal/commerce": "^2.21",
+        "drupal/commerce_printful": "2.0.x-dev",
+        "drupal/commerce_recurring": "^1.0@beta",
+        "drupal/commerce_shipping": "^2.1",
+        "drupal/commerce_shipstation": "2.x-dev",
+        "drupal/commerce_square": "1.x-dev",
+        "drupal/commerce_stripe": "^1.0@RC",
+        "drupal/commerce_ups": "3.x-dev",
+        "drupal/config_filter": "^2.1",
+        "drupal/config_ignore": "^2.3",
+        "drupal/core-composer-scaffold": "^8.8",
+        "drupal/core-project-message": "^8.8",
+        "drupal/core-recommended": "^8.8",
+        "drupal/devel": "^4.0",
+        "drupal/entity": "^1.1",
+        "drupal/field_permissions": "^1.1",
+        "drupal/fieldable_path": "^1.0@RC",
+        "drupal/getjwtonlogin": "^1.0",
+        "drupal/gin": "^3.0",
+        "drupal/inspect": "^4.0",
+        "drupal/json_field": "1.x-dev",
+        "drupal/jsonapi_extras": "^3.20",
+        "drupal/jsonapi_hypermedia": "^1.7",
+        "drupal/jsonapi_resources": "^1.0@beta",
+        "drupal/jwt": "^1.0@beta",
+        "drupal/libraries": "^3.0@beta",
+        "drupal/mailsystem": "^4.3",
+        "drupal/pathauto": "^1.8",
+        "drupal/pathologic": "^1.0@alpha",
+        "drupal/profile": "^1.1",
+        "drupal/rest_views": "^2.0",
+        "drupal/restui": "^1.18",
+        "drupal/search_api": "^1.21",
+        "drupal/state_machine": "^1.0",
+        "drupal/stripe_gate": "^1.0",
+        "drupal/swiftmailer": "^2.0@beta",
+        "drupal/token": "^1.7",
+        "drupal/twig_tweak": "^2.9",
+        "drupal/webform": "^6.0",
+        "drupal/webform_rest": "^4.0",
+        "drush/drush": "^10.3",
+        "square/square": "^17.2"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "drupal/core-composer-scaffold": true,
+            "drupal/core-project-message": true
+        }
+    },
+    "extra": {
+        "patches": {
+            "drupal/commerce_square": {
+                "Zip Code not valid - https://www.drupal.org/project/commerce_square/issues/3123602#comment-13910486": "https://www.drupal.org/files/issues/2020-11-20/commerce-square-postal-code-3123602.patch",
+                "JW - Add Item and Inventory Scopes for commerce_square_catalog": "PATCHES/jw--commerce_square--add-item-inventory-scopes.patch"
+            },
+            "drupal/commerce_printful": {
+                "JW CUSTOM -- Add Tax feature and shipping_method->applies()": "PATCHES/commerce_printful--v4--after-update.patch"
+            },
+            "drupal/commerce_shipstation": {
+                "MS -- Easier to read variation name on shipstation, and more orders to pull for sync all": "PATCHES/commerce_shipstation--variant-name-order-amount.patch"
+            },
+            "drupal/jwt": {
+                "Add configurable JWT expiration date - https://www.drupal.org/project/jwt/issues/2782571": "https://www.drupal.org/files/issues/2022-04-17/2782571-37.patch"
+            },
+            "drupal/json_field": {
+                "Allow D8 install after he made field_widget submodule": "PATCHES/jw--json_field_widget--allow-d8.patch"
+            }
+        },
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "web/"
+            }
+        },
+        "installer-paths": {
+            "web/core": [
+                "type:drupal-core"
+            ],
+            "web/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "web/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "web/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "web/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/Commands/contrib/{$name}": [
+                "type:drupal-drush"
+            ],
+            "web/modules/custom/{$name}": [
+                "type:drupal-custom-module"
+            ],
+            "web/themes/custom/{$name}": [
+                "type:drupal-custom-theme"
+            ]
+        },
+        "drupal-core-project-message": {
+            "include-keys": [
+                "homepage",
+                "support"
+            ],
+            "post-create-project-cmd-message": [
+                "<bg=blue;fg=white>                                                         </>",
+                "<bg=blue;fg=white>  Congratulations, you’ve installed the Drupal codebase  </>",
+                "<bg=blue;fg=white>  from the drupal/recommended-project template!          </>",
+                "<bg=blue;fg=white>                                                         </>",
+                "",
+                "<bg=yellow;fg=black>Next steps</>:",
+                "  * Install the site: https://www.drupal.org/docs/8/install",
+                "  * Read the user guide: https://www.drupal.org/docs/user_guide/en/index.html",
+                "  * Get support: https://www.drupal.org/support",
+                "  * Get involved with the Drupal community:",
+                "      https://www.drupal.org/getting-involved",
+                "  * Remove the plugin that prints this message:",
+                "      composer remove drupal/core-project-message"
+            ]
+        }
+    }
+}

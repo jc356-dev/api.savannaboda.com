@@ -1,0 +1,12 @@
+services:
+  logger.channel.rest_toolkit_commerce:
+    parent: logger.channel_base
+    arguments: ['rest_toolkit_commerce']
+  rest_toolkit_commerce.commerce:
+    class: Drupal\rest_toolkit_commerce\RTCommerceService
+    arguments: ['@commerce_order.address_book', '@commerce_shipping.packer_manager', '@event_dispatcher']
+  rest_toolkit_commerce.packer:
+    class: Drupal\rest_toolkit_commerce\Packer\RTCommercePacker
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: commerce_shipping.packer, priority: 0 }

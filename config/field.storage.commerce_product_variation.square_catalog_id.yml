@@ -1,0 +1,23 @@
+uuid: be762cd4-0058-442c-ac56-5b72b6cf9056
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+_core:
+  default_config_hash: fusZzHvWhYJhiJpsZIJRF3pQocsn9wb57xHKPY6IM4M
+id: commerce_product_variation.square_catalog_id
+field_name: square_catalog_id
+entity_type: commerce_product_variation
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: true
+custom_storage: false

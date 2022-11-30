@@ -1,0 +1,23 @@
+uuid: 77f58740-c3d8-4f73-831a-baaae920aac3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number_or_appointments
+    - node.type.peels
+id: node.peels.field_number_or_appointments
+field_name: field_number_or_appointments
+entity_type: node
+bundle: peels
+label: 'Number or Appointments'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

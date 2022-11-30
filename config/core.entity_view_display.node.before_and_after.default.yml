@@ -1,0 +1,39 @@
+uuid: 4f411531-dca6-441e-b5a0-6e3dd6a75750
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.before_and_after.body
+    - field.field.node.before_and_after.field_image
+    - node.type.before_and_after
+  module:
+    - image
+    - text
+    - user
+id: node.before_and_after.default
+targetEntityType: node
+bundle: before_and_after
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_image:
+    weight: 102
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

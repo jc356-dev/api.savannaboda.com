@@ -1,0 +1,23 @@
+uuid: a849e3ae-c859-4b4a-9957-fb500275585a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_friendly_url
+    - node.type.peels
+  module:
+    - fieldable_path
+id: node.peels.field_friendly_url
+field_name: field_friendly_url
+entity_type: node
+bundle: peels
+label: 'Friendly URL'
+description: 'Auto Generated Friendly URL'
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

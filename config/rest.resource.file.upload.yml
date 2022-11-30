@@ -1,0 +1,20 @@
+uuid: 9c94c0b5-3717-4eae-a8be-72cdad214898
+langcode: en
+status: true
+dependencies:
+  module:
+    - file
+    - jwt
+    - serialization
+    - users_jwt
+id: file.upload
+plugin_id: 'file:upload'
+granularity: resource
+configuration:
+  methods:
+    - POST
+  formats:
+    - json
+  authentication:
+    - jwt_auth
+    - users_jwt_auth

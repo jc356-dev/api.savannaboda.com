@@ -1,0 +1,20 @@
+uuid: a16a022f-ec34-4bb4-a952-0c5a0593d411
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_promo_code
+  module:
+    - user
+id: user.user.field_promo_code
+field_name: field_promo_code
+entity_type: user
+bundle: user
+label: promo_code
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

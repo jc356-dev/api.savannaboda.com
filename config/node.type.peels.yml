@@ -1,0 +1,18 @@
+uuid: 79f1c4cd-3d7c-4031-b54c-50b137128b1e
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: Peels
+type: peels
+description: 'Content for Peels'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

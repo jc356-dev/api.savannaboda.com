@@ -1,0 +1,13 @@
+diff --git a/modules/json_field_widget/json_field_widget.info.yml b/modules/json_field_widget/json_field_widget.info.yml
+index c1dd9ce..e65447b 100644
+--- a/modules/json_field_widget/json_field_widget.info.yml
++++ b/modules/json_field_widget/json_field_widget.info.yml
+@@ -1,7 +1,7 @@
+ name: JSON Field Widget
+ type: module
+ description: Adds a new field widget for the JSON Field module.
+-core_version_requirement: ^9
++core_version_requirement: ^8 || ^9
+ package: Field types
+ dependencies:
+   - json_field:json_field

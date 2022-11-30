@@ -1,0 +1,32 @@
+uuid: 028ee15f-e9de-456f-bab0-0c8cdd398728
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.before_and_after.body
+    - field.field.node.before_and_after.field_image
+    - node.type.before_and_after
+  module:
+    - text
+    - user
+id: node.before_and_after.teaser
+targetEntityType: node
+bundle: before_and_after
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_image: true

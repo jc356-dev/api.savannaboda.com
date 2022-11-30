@@ -1,0 +1,18 @@
+uuid: b55e7762-423d-47c5-bed4-2180408b1f5b
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: 'Promo Codes'
+type: promo_codes
+description: 'These are used to check who signed up with different promo codes'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

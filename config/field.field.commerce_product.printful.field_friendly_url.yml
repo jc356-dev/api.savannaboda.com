@@ -1,0 +1,23 @@
+uuid: f62d507f-1709-41ab-94ed-97954ce7c229
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.printful
+    - field.storage.commerce_product.field_friendly_url
+  module:
+    - fieldable_path
+id: commerce_product.printful.field_friendly_url
+field_name: field_friendly_url
+entity_type: commerce_product
+bundle: printful
+label: 'Friendly URL'
+description: 'Auto Generated Friendly URL'
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

@@ -1,0 +1,28 @@
+uuid: 36f6b6a2-2663-4c36-8ca6-d91f30902ea8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media
+    - media.type.image
+    - node.type.services
+id: node.services.field_media
+field_name: field_media
+entity_type: node
+bundle: services
+label: Media
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,10 @@
+services:
+  commerce_square_catalog.event_subscriber:
+    class: Drupal\commerce_square_catalog\EventSubscriber\CommerceSquareCatalogSubscriber
+    arguments: ['@messenger']
+    tags:
+      - { name: event_subscriber }
+
+  commerce_square_catalog.sdk:
+    class: Drupal\commerce_square_catalog\CommerceSquareCatalogService
+    arguments: ['@config.factory', '@http_client']

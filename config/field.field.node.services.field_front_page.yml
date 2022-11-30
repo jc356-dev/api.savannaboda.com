@@ -1,0 +1,23 @@
+uuid: 844e4589-dcb4-45ab-9233-55c673ed1364
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_front_page
+    - node.type.services
+id: node.services.field_front_page
+field_name: field_front_page
+entity_type: node
+bundle: services
+label: 'Front Page'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'true'
+  off_label: 'false'
+field_type: boolean

@@ -1,0 +1,22 @@
+uuid: e40e7d27-5fe6-450e-bb7b-525fef89bec8
+langcode: en
+status: true
+dependencies:
+  module:
+    - field_permissions
+    - taxonomy
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: taxonomy_term.field_sold_externally
+field_name: field_sold_externally
+entity_type: taxonomy_term
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

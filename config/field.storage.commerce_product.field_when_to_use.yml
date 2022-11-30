@@ -1,0 +1,31 @@
+uuid: a07925b6-6605-4238-901f-3cbe2207713c
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - field_permissions
+    - options
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: commerce_product.field_when_to_use
+field_name: field_when_to_use
+entity_type: commerce_product
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: AM
+      label: AM
+    -
+      value: PM
+      label: PM
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

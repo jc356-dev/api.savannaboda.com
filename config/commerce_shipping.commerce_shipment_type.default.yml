@@ -1,0 +1,12 @@
+uuid: 67670b29-105f-45da-855a-5dedd0e4629c
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: q7uorX1KJg8tf7PBrSSy45-t6FB9Cqw-gsjr7Yn1ueU
+id: default
+label: Default
+profileType: customer
+traits: {  }
+sendConfirmation: true
+confirmationBcc: marco@aquilacreative.co

@@ -1,0 +1,26 @@
+uuid: 8b10005b-9eb7-4b25-93b1-4f05e3ba7a35
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.promo_codes.body
+    - field.field.node.promo_codes.field_promo_author
+    - node.type.promo_codes
+  module:
+    - user
+id: node.promo_codes.default
+targetEntityType: node
+bundle: promo_codes
+mode: default
+content:
+  field_promo_author:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  body: true
+  links: true

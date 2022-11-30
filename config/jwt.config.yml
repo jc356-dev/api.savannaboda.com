@@ -1,0 +1,3 @@
+algorithm: RS256
+key_id: savanna_jwt
+exp: 259200

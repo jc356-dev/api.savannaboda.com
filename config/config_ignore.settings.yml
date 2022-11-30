@@ -1,0 +1,13 @@
+ignored_config_entities:
+  - 'field.storage.commerce_product_variation.attribute_*'
+  - 'field.field.commerce_product_variation.default.attribute_*'
+  - 'core.entity_form_display.commerce_product_variation*'
+  - 'core.entity_view_display.commerce_product_variation*'
+  - 'commerce_product.commerce_product_attribute.*'
+  - commerce_printful.printful_store.aquila
+  - 'commerce_payment.commerce_payment_gateway.*'
+  - commerce_shipstation.shipstation_config
+  - stripe.settings
+  - commerce_shipstation.shipstation_config
+_core:
+  default_config_hash: UVH1aJ4b44UM-VdPVN7hNNuuVqfReJxwfVeDQH1Hvsk

@@ -1,0 +1,23 @@
+uuid: 8b8b6e7b-7854-427b-b6e7-06a0a5b5617a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cost
+    - node.type.peels
+  module:
+    - commerce_price
+id: node.peels.field_cost
+field_name: field_cost
+entity_type: node
+bundle: peels
+label: Cost
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_currencies:
+    - '0'
+field_type: commerce_price

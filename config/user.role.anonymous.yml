@@ -1,0 +1,27 @@
+uuid: 0b593ff8-c499-41f4-9321-f7f0a7ec77a8
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: pq_mEIu_B4widZN7Ap81iCJSjShFFdcL0jEiCi8VrDk
+id: anonymous
+label: 'Anonymous user'
+weight: 0
+is_admin: false
+permissions:
+  - 'access checkout'
+  - 'access comments'
+  - 'access commerce_product overview'
+  - 'access content'
+  - 'access site-wide contact form'
+  - 'restful get webform_rest_elements'
+  - 'restful get webform_rest_fields'
+  - 'restful get webform_rest_submission'
+  - 'restful post user_registration'
+  - 'restful post webform_rest_submit'
+  - 'search content'
+  - 'use text format restricted_html'
+  - 'view commerce_product'
+  - 'view default commerce_product'
+  - 'view media'
+  - 'view own commerce_order'

@@ -1,0 +1,27 @@
+uuid: a1a2cb06-d99f-41a3-aaf5-89af23f0e964
+langcode: en
+status: true
+dependencies:
+  module:
+    - field_permissions
+    - file
+    - taxonomy
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: taxonomy_term.field_icon
+field_name: field_icon
+entity_type: taxonomy_term
+type: file
+settings:
+  display_field: false
+  display_default: false
+  uri_scheme: public
+  target_type: file
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

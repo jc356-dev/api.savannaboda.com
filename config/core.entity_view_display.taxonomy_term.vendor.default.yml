@@ -1,0 +1,47 @@
+uuid: 53054550-7b01-4664-81ed-c8ec91c61db0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.vendor.field_sold_externally
+    - field.field.taxonomy_term.vendor.field_vendor_website
+    - taxonomy.vocabulary.vendor
+  module:
+    - link
+    - text
+id: taxonomy_term.vendor.default
+targetEntityType: taxonomy_term
+bundle: vendor
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_sold_externally:
+    weight: 1
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_vendor_website:
+    weight: 2
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+hidden:
+  search_api_excerpt: true

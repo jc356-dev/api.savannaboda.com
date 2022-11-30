@@ -1,0 +1,23 @@
+uuid: 775794d8-4348-4a4c-aa50-28dce13847de
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_vendor_website
+    - taxonomy.vocabulary.vendor
+  module:
+    - link
+id: taxonomy_term.vendor.field_vendor_website
+field_name: field_vendor_website
+entity_type: taxonomy_term
+bundle: vendor
+label: 'Vendor Website'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

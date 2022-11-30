@@ -1,0 +1,20 @@
+uuid: 6ae73ee0-8e56-430f-ab31-77e4fe639d09
+langcode: en
+status: false
+dependencies:
+  module:
+    - jwt
+    - serialization
+    - system
+    - users_jwt
+id: entity.action
+plugin_id: 'entity:action'
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - jwt_auth
+    - users_jwt_auth

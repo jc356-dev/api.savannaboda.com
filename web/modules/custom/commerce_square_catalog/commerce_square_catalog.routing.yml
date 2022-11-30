@@ -1,0 +1,7 @@
+commerce_square_catalog.settings_form:
+  path: '/admin/config/system/commerce-square-catalog'
+  defaults:
+    _title: 'Commerce Square Catalog settings'
+    _form: 'Drupal\commerce_square_catalog\Form\SettingsForm'
+  requirements:
+    _permission: 'administer commerce_square_catalog configuration'

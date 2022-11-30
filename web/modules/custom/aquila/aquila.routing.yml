@@ -1,0 +1,127 @@
+aquila.settings_form:
+  path: '/admin/config/system/aquila'
+  defaults:
+    _title: 'aquila settings'
+    _form: 'Drupal\aquila\Form\SettingsForm'
+  requirements:
+    _permission: 'administer aquila configuration'
+
+# Stripe Payments.
+aquila.stripe.pay.post:
+  path: '/api/stripe/pay'
+  defaults:
+    _controller: '\Drupal\aquila\Controller\AquilaController::stripe_pay'
+    _title: 'Create Stripe Charge'
+  methods: [POST]
+  arguments: ['@config.factory', '@http_client']
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+
+# # Stripe Payment Intent.
+# aquila.stripe.intent.post:
+#   path: '/api/v1/stripe/intent'
+#   defaults:
+#     _controller: '\Drupal\aquila\Controller\AquilaController::stripe_intent'
+#     _title: 'Get payment Intent'
+#   methods: [POST]
+#   requirements:
+#     _permission: 'access content'
+#     _format: 'json'
+
+# Transistor FM endpoint.
+aquila.transitor.get:
+  path: '/api/v1/podcast'
+  defaults:
+    _controller: '\Drupal\aquila\Controller\AquilaController::get_podcast'
+    _title: 'Get Podcast Episodes'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+
+# # Post contact to ActiveCampaign.
+aquila.accontact.post:
+  path: '/api/v1/ac/contact'
+  defaults:
+    _controller: '\Drupal\aquila\Controller\AquilaController::create_ac_contact'
+    _title: 'Post ActiveCampaing Contact'
+  methods: [POST]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+
+# Entity CRUD controller.
+
+# Ready, but not implemented.
+# aquila.entity.crud.post:
+#   path: '/api/v1/entity/{entity_type}/{bundle}'
+#   defaults:
+#     _controller: '\Drupal\aquila\Controller\AquilaController::post'
+#     _title: 'Create'
+#   methods: [POST]
+#   requirements:
+#     _permission: 'access content'
+#     _format: 'json'
+
+aquila.entity.crud.patch:
+  path: '/api/v1/entity/{entity_type}/{id}'
+  defaults:
+    _controller: '\Drupal\aquila\Controller\AquilaController::patch'
+    _title: 'Patch'
+  methods: [PATCH]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+
+aquila.entity.crud.get:
+  path: '/api/v1/entity/{entity_type}/{id}'
+  defaults:
+    _controller: '\Drupal\aquila\Controller\AquilaController::get'
+    _title: 'Load'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+# End Entity CRUD Controller.
+
+###################################
+#
+#PASSWORD RESET FUNTIONS
+#
+###################################
+
+
+aquila.user.pass.http:
+  path: '/api/user/pass'
+  defaults:
+    _controller: \Drupal\aquila\Controller\AquilaUserAuthenticationController::aquilaTokenResetPassword
+  methods: [PATCH]
+  requirements:
+    _format: 'json'
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+aquila.user.ulipass.http:
+  path: '/api/user/ulipass'
+  defaults:
+    _controller: \Drupal\aquila\Controller\AquilaUserAuthenticationController::aquilaUliPassword
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'FALSE'
+    _format: 'json'
+  options:
+    no_cache: TRUE
+
+aquila.user.ulilogin.http:
+  path: '/api/user/uli/login'
+  defaults:
+    _controller: \Drupal\aquila\Controller\AquilaUserAuthenticationController::uliLogin
+  methods: [POST]
+  requirements:
+    _format: 'json'
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+

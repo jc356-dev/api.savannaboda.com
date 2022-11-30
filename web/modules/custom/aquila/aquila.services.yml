@@ -1,0 +1,14 @@
+services:
+  aquila.event_subscriber:
+    class: Drupal\aquila\EventSubscriber\AquilaSubscriber
+    arguments: ['@messenger']
+    tags:
+      - { name: event_subscriber }
+  aquila.commerce.order_paid_subscriber:
+    class: Drupal\aquila\EventSubscriber\AquilaOrderPaidSubscriber
+    arguments:
+      - '@commerce_order.order_total_summary'
+      - '@entity_type.manager'
+      - '@renderer'
+    tags:
+      - { name: event_subscriber }

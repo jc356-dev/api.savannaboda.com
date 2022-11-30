@@ -1,0 +1,12 @@
+diff --git a/src/OrderItemsTrait.php b/src/OrderItemsTrait.php
+index 95f6f63..5e8c9ff 100644
+--- a/src/OrderItemsTrait.php
++++ b/src/OrderItemsTrait.php
+@@ -31,6 +31,7 @@ trait OrderItemsTrait {
+       $address = $shipment->getShippingProfile()->get('address')->first()->getValue();
+       $output['recipient'] = [
+         'address1' => $address['address_line1'],
++        'address2' => $address['address_line2'],
+         'city' => $address['locality'],
+         'country_code' => $address['country_code'],
+         'state_code' => !empty($address['administrative_area']) ? $address['administrative_area'] : NULL,

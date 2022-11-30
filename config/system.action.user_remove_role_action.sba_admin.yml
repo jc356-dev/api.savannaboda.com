@@ -1,0 +1,14 @@
+uuid: 9080d708-2a2f-4132-a1fc-37063e642a35
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.sba_admin
+  module:
+    - user
+id: user_remove_role_action.sba_admin
+label: 'Remove the SBA Admin role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: sba_admin

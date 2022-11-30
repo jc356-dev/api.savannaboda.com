@@ -1,0 +1,17 @@
+uuid: 36872c2f-2246-4ae8-ab16-3910acd12ad3
+langcode: en
+status: true
+dependencies: {  }
+id: savanna
+label: Savanna
+apiKey: 'q4dic8do-zx0h-e6ns:bypw-rlhli0w21pm2'
+commerceStoreId: '1'
+productBundle: printful
+attributeMapping:
+  color: attribute_colors
+  size: attribute_size
+  image: field_image
+syncOrders: true
+draftOrders: false
+webhooks:
+  package_shipped: 1

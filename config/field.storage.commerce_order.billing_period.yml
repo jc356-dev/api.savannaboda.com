@@ -1,0 +1,21 @@
+uuid: 2502fd4b-31d2-4dc9-984f-aefae0992c54
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_order
+    - commerce_recurring
+_core:
+  default_config_hash: '-OMNCN1BJSuk0cZnztgyjDzpFCGJ91isDcGyKVdQgpY'
+id: commerce_order.billing_period
+field_name: billing_period
+entity_type: commerce_order
+type: commerce_billing_period
+settings: {  }
+module: commerce_recurring
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

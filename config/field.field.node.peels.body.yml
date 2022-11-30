@@ -1,0 +1,23 @@
+uuid: 32a11d63-6632-49a8-abb4-684d72114dbb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.peels
+  module:
+    - text
+id: node.peels.body
+field_name: body
+entity_type: node
+bundle: peels
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

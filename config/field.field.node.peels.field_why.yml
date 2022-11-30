@@ -1,0 +1,19 @@
+uuid: 0c009515-e2f3-4df3-a4b1-743b9d557f86
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_why
+    - node.type.peels
+id: node.peels.field_why
+field_name: field_why
+entity_type: node
+bundle: peels
+label: 'Why Savanna Loves It'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

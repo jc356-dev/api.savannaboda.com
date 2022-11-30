@@ -1,0 +1,18 @@
+uuid: 1aa6f368-320a-4a31-a98f-90ab11607598
+langcode: en
+status: false
+dependencies:
+  module:
+    - jwt
+    - search
+    - serialization
+id: entity.search_page
+plugin_id: 'entity:search_page'
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - jwt_auth

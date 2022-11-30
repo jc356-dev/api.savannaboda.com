@@ -1,0 +1,21 @@
+uuid: f0cb524c-7bae-4fa2-83a9-d399693c5dcf
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.printful
+    - field.storage.commerce_product_variation.printful_reference
+  module:
+    - commerce_printful
+id: commerce_product_variation.printful.printful_reference
+field_name: printful_reference
+entity_type: commerce_product_variation
+bundle: printful
+label: 'Printful reference'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: printful_reference

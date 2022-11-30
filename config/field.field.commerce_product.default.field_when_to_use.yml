@@ -1,0 +1,21 @@
+uuid: d1fbd113-cd37-4e87-92a6-8a921e43ff3d
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.default
+    - field.storage.commerce_product.field_when_to_use
+  module:
+    - options
+id: commerce_product.default.field_when_to_use
+field_name: field_when_to_use
+entity_type: commerce_product
+bundle: default
+label: 'When to use'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

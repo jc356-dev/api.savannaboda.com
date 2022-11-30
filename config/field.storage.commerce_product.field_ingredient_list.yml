@@ -1,0 +1,23 @@
+uuid: b06ca882-f78a-4375-a28c-78bb6e2fa49e
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - field_permissions
+    - text
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: commerce_product.field_ingredient_list
+field_name: field_ingredient_list
+entity_type: commerce_product
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

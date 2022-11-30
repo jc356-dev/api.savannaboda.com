@@ -1,0 +1,6 @@
+commerce_square_catalog.settings_form:
+  title: 'Square Catalog'
+  description: 'Configure Commerce Square Catalog settings.'
+  parent: commerce.configuration
+  route_name: commerce_square_catalog.settings_form
+  weight: 10

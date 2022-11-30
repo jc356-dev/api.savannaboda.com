@@ -1,0 +1,18 @@
+commerce_shipstation_username: aquila_sba_2022
+commerce_shipstation_password: x5LzMaDM54EmbV5
+commerce_shipstation_logging: 1
+commerce_shipstation_reload: 0
+commerce_shipstation_alternate_auth: ''
+commerce_shipstation_export_paging: '150'
+commerce_shipstation_billing_phone_number_field: none
+commerce_shipstation_shipping_phone_number_field: none
+commerce_shipstation_order_notes_field: none
+commerce_shipstation_customer_notes_field: none
+commerce_shipstation_product_images_field: commerce_product_variation.field_image
+commerce_shipstation_export_status:
+  fulfillment: fulfillment
+commerce_shipstation_exposed_shipping_methods:
+  flat_rate: flat_rate
+  ups: ups
+  printful_shipping: 0
+  flat_rate_per_item: 0

@@ -1,0 +1,27 @@
+uuid: 87eb5649-290c-49c0-a637-7d121211dd7d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_icon
+    - taxonomy.vocabulary.skin_types
+  module:
+    - file
+id: taxonomy_term.skin_types.field_icon
+field_name: field_icon
+entity_type: taxonomy_term
+bundle: skin_types
+label: Icon
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'svg png gif jpg jpeg'
+  max_filesize: ''
+  description_field: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file

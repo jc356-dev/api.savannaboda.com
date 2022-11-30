@@ -1,0 +1,23 @@
+uuid: 5f583c80-3830-43df-9902-40f649c15da2
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_price
+    - field_permissions
+    - node
+third_party_settings:
+  field_permissions:
+    permission_type: public
+id: node.field_cost
+field_name: field_cost
+entity_type: node
+type: commerce_price
+settings: {  }
+module: commerce_price
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

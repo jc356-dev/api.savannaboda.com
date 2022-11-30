@@ -1,0 +1,21 @@
+uuid: 59970aa8-b1c9-494d-a92d-d75b0ddd0f9a
+langcode: en
+status: false
+dependencies:
+  module:
+    - commerce_square
+id: square_test
+label: 'Square Test'
+weight: -10
+plugin: square
+configuration:
+  test_location_id: L2A4VDDHJ7JH8
+  live_location_id: GXTEX7Z8PCFD0
+  enable_credit_card_icons: true
+  display_label: Square
+  mode: test
+  payment_method_types:
+    - credit_card
+  collect_billing_information: true
+conditions: {  }
+conditionOperator: AND

@@ -1,0 +1,27 @@
+uuid: 4938ede8-ed86-4a08-81f3-d9bc29f32e6f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sub_services
+    - node.type.services
+id: node.services.field_sub_services
+field_name: field_sub_services
+entity_type: node
+bundle: services
+label: Sub-services
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      services: services
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

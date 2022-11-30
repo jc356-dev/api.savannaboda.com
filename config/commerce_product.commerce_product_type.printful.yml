@@ -1,0 +1,12 @@
+uuid: f7a5883e-2e54-49de-8d6d-ca66203c3285
+langcode: en
+status: true
+dependencies: {  }
+id: printful
+label: Printful
+description: ''
+variationType: printful
+multipleVariations: true
+injectVariationFields: true
+traits: {  }
+locked: false

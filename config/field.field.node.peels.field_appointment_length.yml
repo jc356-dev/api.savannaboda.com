@@ -1,0 +1,23 @@
+uuid: 65aa76bc-555c-4170-bdf4-7a61b86a0b4c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_appointment_length
+    - node.type.peels
+id: node.peels.field_appointment_length
+field_name: field_appointment_length
+entity_type: node
+bundle: peels
+label: 'Appointment Length'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

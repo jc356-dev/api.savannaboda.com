@@ -1,0 +1,31 @@
+diff --git a/src/Form/ShipStationAdminForm.php b/src/Form/ShipStationAdminForm.php
+index e884c2f..d161032 100644
+--- a/src/Form/ShipStationAdminForm.php
++++ b/src/Form/ShipStationAdminForm.php
+@@ -114,7 +114,9 @@ class ShipStationAdminForm extends ConfigFormBase {
+       '#type' => 'select',
+       '#title' => $this->t('Number of Records to Export per Page'),
+       '#description' => t('Sets the number of orders to send to ShipStation at a time. Change this setting if you experience import timeouts.'),
+-      '#options' => [20 => 20, 50 => 50, 75 => 75, 100 => 100, 150 => 150],
++      // '#options' => [20 => 20, 50 => 50, 75 => 75, 100 => 100, 150 => 150, 300 => 300, 500 => 500],
++      // @patch changed to bring in more orders than what it currently is capable off
++      '#options' => [20 => 20, 50 => 50, 75 => 75, 100 => 100, 150 => 150, 300 => 300, 500 => 500],
+       '#default_value' => $ss_config->get('commerce_shipstation_export_paging'),
+     ];
+ 
+diff --git a/src/ShipStation.php b/src/ShipStation.php
+index 3b58ade..85f04e8 100644
+--- a/src/ShipStation.php
++++ b/src/ShipStation.php
+@@ -394,7 +394,10 @@ class ShipStation {
+             $line_item_xml = $line_items_xml->addChild('Item');
+             $line_item_cdata = [
+               'SKU' => $product_variation->getSku(),
+-              'Name' => $shipping_item->getTitle(),
++              //'Name' => $shipping_item->getTitle(),
++              // @patch added to get a better description in shipstation
++              'Name' => $product->getTitle().' - '.$shipping_item->getTitle(),
++
+             ];
+ 
+             if (strtolower($field_product_images) != 'none') {

@@ -1,0 +1,260 @@
+diff --git a/src/EventSubscriber/OrderEventSubscriber.php b/src/EventSubscriber/OrderEventSubscriber.php
+index baab992..406df91 100644
+--- a/src/EventSubscriber/OrderEventSubscriber.php
++++ b/src/EventSubscriber/OrderEventSubscriber.php
+@@ -5,6 +5,7 @@ namespace Drupal\commerce_printful\EventSubscriber;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+ use Drupal\commerce_printful\Service\OrderIntegratorInterface;
+ use Drupal\commerce_order\Event\OrderEvent;
++use Drupal\commerce_shipping\Event\ShippingRatesEvent;
+ 
+ /**
+  * Defines the order event subscriber.
+@@ -34,6 +35,7 @@ class OrderEventSubscriber implements EventSubscriberInterface {
+   public static function getSubscribedEvents() {
+     $events = [
+       'commerce_order.order.paid' => 'sendToPrintful',
++      'commerce_shipping.rates' => 'calculatePrintfulTax'
+     ];
+     return $events;
+   }
+@@ -49,4 +51,10 @@ class OrderEventSubscriber implements EventSubscriberInterface {
+     $this->orderIntegrator->createPrintfulOrder($order);
+   }
+ 
++  public function calculatePrintfulTax(ShippingRatesEvent $event) {
++    $shipment = $event->getShipment();
++    $order = $shipment->getOrder();
++    $this->orderIntegrator->addPrintfulTax($shipment, $order);
++  }
++
+ }
+diff --git a/src/OrderItemsTrait.php b/src/OrderItemsTrait.php
+index 5e8c9ff..58f8daf 100644
+--- a/src/OrderItemsTrait.php
++++ b/src/OrderItemsTrait.php
+@@ -106,6 +106,40 @@ trait OrderItemsTrait {
+     return $output;
+   }
+ 
++  /**
++   * Add recipient only for tax calcuation.
++   *
++   * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
++   *   A shipment entity.
++   * @param bool $more
++   *   Should more data be included (needed for order creation)?
++   */
++  protected function getTaxRequestData(ShipmentInterface $shipment) {
++    $output = [];
++
++    if (!$shipment->getShippingProfile()->get('address')->isEmpty()) {
++      $address = $shipment->getShippingProfile()->get('address')->first()->getValue();
++      $output['recipient'] = [
++        'address1' => $address['address_line1'],
++        'city' => $address['locality'],
++        'country_code' => $address['country_code'],
++        'state_code' => !empty($address['administrative_area']) ? $address['administrative_area'] : NULL,
++        'zip' => $address['postal_code'],
++      ];
++
++      $printful_stores = \Drupal::entityTypeManager()->getStorage('printful_store')->loadMultiple();
++      // Dumb for now.
++      // Could possibly check like this, but may need method on PrintfulStore
++      // to fetch the protected PrintfulStore->commerceStoreId.
++      // if (in_array($printful_store->commerceStoreId, variation->getStores())
++      $printful_store = reset($printful_stores);
++      $this->setPrintfulStore($printful_store);
++      $output['_printful_store'] = $printful_store;
++    }
++
++    return $output;
++  }
++
+   /**
+    * {@inheritdoc}
+    */
+diff --git a/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php b/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
+index 31aa1d5..e6ad1ed 100644
+--- a/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
++++ b/src/Plugin/Commerce/ShippingMethod/PrintfulShipping.php
+@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
+ use Drupal\commerce_price\Price;
+ use Drupal\commerce_shipping\Entity\ShipmentInterface;
+ use Drupal\commerce_shipping\PackageTypeManagerInterface;
++use Drupal\commerce_shipping\Event\ShippingEvents;
++use Drupal\commerce_shipping\Event\ShippingRatesEvent;
+ use Drupal\state_machine\WorkflowManagerInterface;
+ use Drupal\commerce_shipping\ShippingRate;
+ use Drupal\Core\Form\FormStateInterface;
+@@ -62,6 +64,13 @@ class PrintfulShipping extends ShippingMethodBase {
+    */
+   protected $priceExchangerCalculator;
+ 
++  /**
++   * The event dispatcher.
++   *
++   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
++   */
++  protected $eventDispatcher;
++
+   /**
+    * Constructor.
+    *
+@@ -101,6 +110,7 @@ class PrintfulShipping extends ShippingMethodBase {
+     $this->logger = $logger;
+     $this->integrationSettings = $config->get('product_sync_data');
+     $this->priceExchangerCalculator = $price_exchanger_calculator;
++    $this->eventDispatcher = \Drupal::service('event_dispatcher');
+   }
+ 
+   /**
+@@ -178,6 +188,9 @@ class PrintfulShipping extends ShippingMethodBase {
+         }
+         // Sort by price ASC.
+         ksort($rates);
++        // Fire the proper commerce_shipping event on rate calculation.
++        $event = new ShippingRatesEvent($rates, $this->parentEntity, $shipment);
++        $this->eventDispatcher->dispatch(ShippingEvents::SHIPPING_RATES, $event);
+       }
+       catch (PrintfulException $e) {
+         $this->logger->error(
+@@ -192,4 +205,36 @@ class PrintfulShipping extends ShippingMethodBase {
+     return $rates;
+   }
+ 
++  /**
++   * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
++   *
++   * @return bool
++   */
++  public function applies(ShipmentInterface $shipment): bool {
++    if (!$shipment->hasItems()) {
++      return FALSE;
++    }
++
++    foreach ($shipment->getOrder()->getItems() as $orderItem) {
++      $order_items[$orderItem->id()] = $orderItem;
++    }
++
++    foreach ($shipment->getItems() as $shipmentItem) {
++      // Check if the $shipmentItem is in the $order_items.
++      if (!isset($order_items[$shipmentItem->getOrderItemId()])) {
++        continue;
++      }
++      $orderItem = $order_items[$shipmentItem->getOrderItemId()];
++      $purchasedEntity = $orderItem->getPurchasedEntity();
++      if (!$purchasedEntity) {
++        continue;
++      }
++      if (!$purchasedEntity->hasField('printful_reference')) {
++        return FALSE;
++      }
++    }
++
++    return TRUE;
++  }
++
+ }
+diff --git a/src/Service/OrderIntegrator.php b/src/Service/OrderIntegrator.php
+index 873d0d7..91b1f5d 100644
+--- a/src/Service/OrderIntegrator.php
++++ b/src/Service/OrderIntegrator.php
+@@ -6,8 +6,10 @@ use Drupal\commerce_printful\OrderItemsTrait;
+ use Drupal\Core\StringTranslation\StringTranslationTrait;
+ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+ use Drupal\commerce_printful\Entity\PrintfulStoreInterface;
++use Drupal\commerce_order\Adjustment;
+ use Drupal\commerce_order\Entity\OrderInterface;
+ use Drupal\commerce_printful\Exception\PrintfulException;
++use Drupal\commerce_shipping\Entity\ShipmentInterface;
+ 
+ /**
+  * Printful order integration service implementation.
+@@ -115,4 +117,71 @@ class OrderIntegrator implements OrderIntegratorInterface {
+     }
+   }
+ 
++   /**
++    * {@inheritdoc}
++    */
++  public function addPrintfulTax(ShipmentInterface $shipment, OrderInterface $order) {
++    if (TRUE) {
++    // Shipment isn't determined yet.  Instead look at if order type is right, by products or store?
++    // if ($shipment->getShippingMethod()->getPlugin()->getPluginId() === 'printful_shipping') {
++
++      $request_data = $this->getTaxRequestData($shipment);
++      if (!empty($request_data)) {
++        // Set API key if not default.
++        // @see Drupal\commerce_printful\Service\OrderIntegrator::createPrintfulOrder().
++        if (!empty($request_data['_printful_store'])) {
++          $this->pf->setConnectionInfo([
++            'api_key' => $request_data['_printful_store']->get('apiKey'),
++          ]);
++          unset($request_data['_printful_store']);
++        }
++
++        try {
++          $result = $this->pf->taxRates($request_data);
++          $taxInfo = $result['result'];
++          // Example return:
++          // {
++          //   "code": 200,
++          //   "result": {
++          //       "required": true,
++          //       "rate": 0.0725,
++          //       "shipping_taxable": true
++          //   },
++          //   "extra": []
++          // }
++
++          // If not required, skip?
++          if (!$taxInfo['required'] || empty($taxInfo['rate'])) {
++            return;
++          }
++
++          /** @var \Drupal\commerce_price\Price $subtotal */
++          $subtotal = $order->getSubtotalPrice();
++          $taxAmount = $subtotal->multiply($taxInfo['rate']);
++          // Solves issue with stale order.
++          // $order = Order::load($order->id());
++          $order->addAdjustment(new Adjustment([
++            'type' => 'tax',
++            'label' => 'Tax',
++            'amount' => $taxAmount,
++            // 'percentage' => $percentage->getNumber(),
++            'source_id' => $order->id(),
++            'included' => FALSE,
++          ]));
++          $order->setRefreshState(OrderInterface::REFRESH_SKIP);
++          $order->save();
++        }
++        catch (PrintfulException $e) {
++          $this->logger->error(
++            "Couldn't load tax data. Error: @details",
++            [
++              '@details' => $e->getFullInfo(),
++            ]
++          );
++        }
++      }
++
++    }
++  }
++
+ }
+diff --git a/src/Service/Printful.php b/src/Service/Printful.php
+index 2366906..50e9877 100644
+--- a/src/Service/Printful.php
++++ b/src/Service/Printful.php
+@@ -32,6 +32,10 @@ class Printful implements PrintfulInterface {
+       'path' => 'shipping/rates',
+       'method' => 'POST',
+     ],
++    'taxRates' => [
++      'path' => 'tax/rates',
++      'method' => 'POST',
++    ],
+     'createOrder' => [
+       'path' => 'orders',
+       'method' => 'POST',

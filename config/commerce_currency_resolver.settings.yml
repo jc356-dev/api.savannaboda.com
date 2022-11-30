@@ -1,0 +1,6 @@
+currency_mapping: store
+currency_source: combo
+currency_default: USD
+currency_exchange_rates: ''
+_core:
+  default_config_hash: 1k-GIZN3PTJHm83zaOL4bnkSzaDGS7LesrkWcSoADhI

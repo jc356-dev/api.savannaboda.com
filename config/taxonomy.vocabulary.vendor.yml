@@ -1,0 +1,8 @@
+uuid: d3df4f39-6f90-43af-9c46-9d672d84671d
+langcode: en
+status: true
+dependencies: {  }
+name: Vendor
+vid: vendor
+description: ''
+weight: 0

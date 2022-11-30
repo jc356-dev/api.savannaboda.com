@@ -1,0 +1,21 @@
+uuid: b1c89a5f-809e-4f65-a8d1-d98890068115
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_printful
+    - commerce_product
+_core:
+  default_config_hash: Dr8IMp6s5j67KyvmhYW0jQlXTBJn8fwihDIaT0nQT90
+id: commerce_product.printful_reference
+field_name: printful_reference
+entity_type: commerce_product
+type: printful_reference
+settings: {  }
+module: commerce_printful
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: true
+custom_storage: false

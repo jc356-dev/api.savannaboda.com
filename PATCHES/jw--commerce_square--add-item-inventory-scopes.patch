@@ -1,0 +1,14 @@
+diff --git a/src/Form/SquareSettings.php b/src/Form/SquareSettings.php
+index cd52824..1ced8cb 100644
+--- a/src/Form/SquareSettings.php
++++ b/src/Form/SquareSettings.php
+@@ -20,6 +20,9 @@ class SquareSettings extends ConfigFormBase {
+     'CUSTOMERS_READ',
+     'CUSTOMERS_WRITE',
+     'ORDERS_WRITE',
++    'ITEMS_READ',
++    'INVENTORY_READ',
++    'INVENTORY_WRITE',
+   ];
+ 
+   /**

@@ -1,0 +1,93 @@
+rest_toolkit_commerce.commerce.order.post:
+  path: 'rtapi/v1/commerce/order'
+  defaults:
+    _controller: '\Drupal\rest_toolkit_commerce\Controller\RTCommerceController::orderPost'
+    _title: 'Create Order'
+  methods: [POST]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+
+# rest_toolkit_commerce.commerce.order.patch:
+#   path: 'rtapi/v1/commerce/order/{order}'
+#   defaults:
+#     _controller: '\Drupal\rest_toolkit_commerce\Controller\RTCommerceController::finalizeOrderPatch'
+#     _title: 'Finalize Order'
+#   methods: [PATCH]
+#   requirements:
+#     _permission: 'access content'
+#     _format: 'json'
+#   options:
+#     parameters:
+#       order:
+#         type: entity:commerce_order
+
+rest_toolkit_commerce.commerce.order.patch:
+  path: 'rtapi/v1/commerce/order/{order}'
+  defaults:
+    _controller: '\Drupal\rest_toolkit_commerce\Controller\RTCommerceController::finalizeStripeOrderPatch'
+    _title: 'Finalize Order'
+  methods: [PATCH]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+  options:
+    parameters:
+      order:
+        type: entity:commerce_order
+
+rest_toolkit_commerce.commerce.order_apply_promo.patch:
+  path: 'rtapi/v1/commerce/order/{order}/promo'
+  defaults:
+    _controller: '\Drupal\rest_toolkit_commerce\Controller\RTCommerceController::applyPromoCodeToOrder'
+    _title: 'Apply Promo to Order'
+  methods: [PATCH]
+  requirements:
+    _permission: 'access content'
+    _format: 'json'
+  options:
+    parameters:
+      order:
+        type: entity:commerce_order
+
+# RTC Additional Settings, currently unused.
+rest_toolkit_commerce.settings:
+  path: '/admin/config/system/rest-toolkit-commerce-settings'
+  defaults:
+    _title: 'Rest Toolkit Commerce Settings'
+    _form: 'Drupal\rest_toolkit_commerce\Form\RestToolkitCommerceSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'
+
+# RTC Custom Adjustment Config Entities.
+entity.rtc_custom_adjustment.collection:
+  path: '/admin/structure/rtc-custom-adjustment'
+  defaults:
+    _entity_list: 'rtc_custom_adjustment'
+    _title: 'RTC Custom Adjustment configuration'
+  requirements:
+    _permission: 'administer rtc_custom_adjustment'
+
+entity.rtc_custom_adjustment.add_form:
+  path: '/admin/structure/rtc_custom_adjustment/add'
+  defaults:
+    _entity_form: 'rtc_custom_adjustment.add'
+    _title: 'Add a rtc custom adjustment'
+  requirements:
+    _permission: 'administer rtc_custom_adjustment'
+
+entity.rtc_custom_adjustment.edit_form:
+  path: '/admin/structure/rtc-custom-adjustment/{rtc_custom_adjustment}'
+  defaults:
+    _entity_form: 'rtc_custom_adjustment.edit'
+    _title: 'Edit a rtc custom adjustment'
+  requirements:
+    _permission: 'administer rtc_custom_adjustment'
+
+entity.rtc_custom_adjustment.delete_form:
+  path: '/admin/structure/rtc-custom-adjustment/{rtc_custom_adjustment}/delete'
+  defaults:
+    _entity_form: 'rtc_custom_adjustment.delete'
+    _title: 'Delete a rtc custom adjustment'
+  requirements:
+    _permission: 'administer rtc_custom_adjustment'

@@ -1,0 +1,18 @@
+uuid: 40d32daa-4e1a-49b9-b6ec-21be7ee9da27
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.before_and_after
+id: node.before_and_after.title
+field_name: title
+entity_type: node
+bundle: before_and_after
+label: 'Title (Before and After)'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

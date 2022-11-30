@@ -1,0 +1,32 @@
+uuid: 7b89cb86-5cb8-4558-a776-7b4ab90dfae7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.skin_types.field_icon
+    - taxonomy.vocabulary.skin_types
+  module:
+    - file
+    - text
+id: taxonomy_term.skin_types.default
+targetEntityType: taxonomy_term
+bundle: skin_types
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_icon:
+    weight: 1
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    type: file_default
+    region: content
+hidden:
+  search_api_excerpt: true

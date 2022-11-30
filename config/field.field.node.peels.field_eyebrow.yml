@@ -1,0 +1,19 @@
+uuid: e228a3ed-769f-49f2-b16e-819ab19e4ffa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_eyebrow
+    - node.type.peels
+id: node.peels.field_eyebrow
+field_name: field_eyebrow
+entity_type: node
+bundle: peels
+label: Eyebrow
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,57 @@
+uuid: 23be06db-7dd1-4aa3-80e9-30297c85d084
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.services.body
+    - field.field.node.services.field_appointment_length
+    - field.field.node.services.field_cost
+    - field.field.node.services.field_eyebrow
+    - field.field.node.services.field_friendly_url
+    - field.field.node.services.field_front_page
+    - field.field.node.services.field_headline
+    - field.field.node.services.field_how
+    - field.field.node.services.field_image
+    - field.field.node.services.field_media
+    - field.field.node.services.field_number_or_appointments
+    - field.field.node.services.field_sub_services
+    - field.field.node.services.field_who
+    - field.field.node.services.field_why
+    - node.type.services
+  module:
+    - text
+    - user
+id: node.services.teaser
+targetEntityType: node
+bundle: services
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_appointment_length: true
+  field_cost: true
+  field_eyebrow: true
+  field_friendly_url: true
+  field_front_page: true
+  field_headline: true
+  field_how: true
+  field_image: true
+  field_media: true
+  field_number_or_appointments: true
+  field_sub_services: true
+  field_who: true
+  field_why: true
+  search_api_excerpt: true

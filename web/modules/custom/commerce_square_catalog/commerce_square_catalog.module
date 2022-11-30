@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Commerce Square Catalog module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+/**
+ * Implements hook_cron().
+ * Commented 3-30-2022, prevent Square inventory check.
+ */
+// function commerce_square_catalog_cron() {
+//   _commerce_square_catalog_batch_inventory_cron();
+// }
+
+/**
+ * @return void
+ */
+function _commerce_square_catalog_batch_inventory_cron($testMode = FALSE) {
+  // Tempstore for cursor (pagination).
+  /**
+   * @var \Drupal\Core\TempStore\SharedTempStore $tempStore
+   */
+  $tempStore = \Drupal::service('tempstore.shared')->get('commerce_square_catalog');
+  if ($testMode) {
+    $cursor = $tempStore->get('sandbox:items_inventory_cron:cursor');
+  }
+  else {
+    $cursor = $tempStore->get('production:items_inventory_cron:cursor');
+  }
+
+  // Get Square SDK.
+  $squareSDK = \Drupal::service('commerce_square_catalog.sdk');
+  /**
+   * @var \Square\SquareClient $client
+   */
+  $client = $squareSDK->getClient($testMode);
+  $inventoryApi = $client->getInventoryApi();
+  $body = new \Square\Models\BatchRetrieveInventoryCountsRequest;
+  if (!empty($cursor)) {
+    $body->setCursor($cursor);
+  }
+
+  $apiResponse = $inventoryApi->batchRetrieveInventoryCounts($body);
+  // Maybe log an error.
+  if (!$apiResponse->isSuccess()) {
+    return;
+  }
+
+  /**
+   * @var \Square\Models\BatchRetrieveInventoryCountsResponse $response
+   */
+  $response = $apiResponse->getResult();
+
+  $productVariationStorage = \Drupal::entityTypeManager()->getStorage('commerce_product_variation');
+  foreach ($response->getCounts() as $inventoryItem) {
+    if (intval($inventoryItem->getQuantity()) < 1) {
+      $variationCheck = $productVariationStorage->loadByProperties([
+        'square_catalog_id' => $inventoryItem->getCatalogObjectId()
+      ]);
+      if (!empty($variationCheck)) {
+        $variation = reset($variationCheck);
+        $variation->setActive(FALSE);
+        $variation->save();
+        \Drupal::logger('commerce_square_catalog')->notice($variation->getTitle() . t(' | Variation inventory < 1, Unpublished.'));
+      }
+    }
+  }
+
+  // Set next cursor (pagination) point.
+  $cursorNext = $response->getCursor();
+  if ($testMode) {
+    $tempStore->set('sandbox:items_inventory_cron:cursor', $cursorNext);
+  }
+  else {
+    $tempStore->set('production:items_inventory_cron:cursor', $cursorNext);
+  }
+}

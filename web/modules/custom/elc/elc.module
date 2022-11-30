@@ -1,0 +1,38 @@
+<?php
+use \Drupal\user\UserInterface;
+use \Drupal\Entity\EntityTypeManager;
+
+/**
+ * @file
+ * Primary module hooks for elc module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+
+function elc_user_insert($account) {
+	\Drupal::logger('elc')->debug("Hello Again");
+	//dd("PromoCodes");
+	if( !empty($account->field_promo_code->value) || $account->field_promo_code->value != '') {
+		$promo_codes = \Drupal::entityTypeManager()->getStorage('node')
+			->loadByProperties([
+				//'field_promo_code' => $account->field_promo_code->value->toString()
+				'type' => 'promo_codes',
+				'title' => $account->field_promo_code->value
+			]);
+
+		if(!empty($promo_codes)) {
+			$account->set('field_account_type', 'team_member');
+			$account->save();
+			dd($promo_codes);
+		} else {
+			$account->set('field_account_type', 'free');
+			$account->save();
+		}
+	}else{
+		$account->set('field_account_type', 'free');
+		$account->save();
+	}
+}

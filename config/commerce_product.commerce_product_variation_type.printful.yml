@@ -1,0 +1,11 @@
+uuid: 32694f0e-b02d-4aa6-9644-ddf0bff9c705
+langcode: en
+status: true
+dependencies: {  }
+id: printful
+label: Printful
+orderItemType: default
+generateTitle: false
+traits:
+  - purchasable_entity_shippable
+locked: false

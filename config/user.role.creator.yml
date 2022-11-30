@@ -1,0 +1,14 @@
+uuid: 7c2df30f-abbc-4550-bfa2-01d8f9c482a7
+langcode: en
+status: true
+dependencies: {  }
+id: creator
+label: Creator
+weight: 3
+is_admin: null
+permissions:
+  - 'create article content'
+  - 'delete own article content'
+  - 'edit own article content'
+  - 'view article revisions'
+  - 'view own unpublished content'

@@ -1,0 +1,160 @@
+uuid: 38c118d6-48bd-46a8-9867-a77ab388b2f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.default
+    - field.field.commerce_product.default.body
+    - field.field.commerce_product.default.field_categories
+    - field.field.commerce_product.default.field_external_link
+    - field.field.commerce_product.default.field_friendly_url
+    - field.field.commerce_product.default.field_how_to_use
+    - field.field.commerce_product.default.field_image
+    - field.field.commerce_product.default.field_ingredient_list
+    - field.field.commerce_product.default.field_key_ingredients
+    - field.field.commerce_product.default.field_restricted
+    - field.field.commerce_product.default.field_skin_types
+    - field.field.commerce_product.default.field_vendor
+    - field.field.commerce_product.default.field_when_to_use
+    - field.field.commerce_product.default.field_why_savanna_loves_it
+    - field.field.commerce_product.default.square_catalog_id
+  module:
+    - commerce_product
+    - fieldable_path
+    - image
+    - link
+    - options
+    - text
+_core:
+  default_config_hash: 10qgl6V_HwkrJufzsNCV75OpqOeMzzKDJb3BhaogmzQ
+id: commerce_product.default.default
+targetEntityType: commerce_product
+bundle: default
+mode: default
+content:
+  body:
+    type: text_default
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_categories:
+    weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_external_link:
+    weight: 13
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_friendly_url:
+    weight: 12
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: fieldable_path_formatter
+    region: content
+  field_how_to_use:
+    weight: 7
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_image:
+    weight: 2
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_ingredient_list:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_key_ingredients:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_restricted:
+    weight: 10
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_skin_types:
+    weight: 11
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_vendor:
+    weight: 4
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_when_to_use:
+    weight: 6
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_why_savanna_loves_it:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  title:
+    label: hidden
+    type: string
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  variations:
+    type: commerce_add_to_cart
+    weight: 1
+    label: hidden
+    settings:
+      combine: true
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  search_api_excerpt: true
+  square_catalog_id: true
+  stores: true
+  uid: true

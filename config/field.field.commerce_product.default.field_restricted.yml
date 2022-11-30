@@ -1,0 +1,23 @@
+uuid: bbf2b323-3d58-4add-991c-0a21f94b492b
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.default
+    - field.storage.commerce_product.field_restricted
+id: commerce_product.default.field_restricted
+field_name: field_restricted
+entity_type: commerce_product
+bundle: default
+label: Restricted
+description: 'A switch for if the product can only be bought by logged in users'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'true'
+  off_label: 'false'
+field_type: boolean
